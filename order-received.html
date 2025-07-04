@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Order Received - JunkDrop</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    body {
+      background: linear-gradient(135deg, #d6f5ff, #e6f2ff);
+      font-family: Arial, sans-serif;
+      color: #333;
+      margin: 0;
+      padding: 40px 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      text-align: center;
+    }
+    img.checkmark {
+      width: 80px;
+      height: 80px;
+      margin-bottom: 20px;
+    }
+    h1 {
+      color: #006699;
+      margin-bottom: 20px;
+    }
+    p {
+      font-size: 18px;
+      margin-bottom: 40px;
+      max-width: 400px;
+      color: #004466;
+    }
+    button {
+      background: #006699;
+      color: white;
+      border: none;
+      padding: 14px 28px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 18px;
+      transition: background 0.3s ease;
+    }
+    button:hover {
+      background: #004466;
+    }
+  </style>
+</head>
+<body>
+  <!-- Animated checkmark GIF -->
+  <img class="checkmark" src="https://i.gifer.com/7efs.gif" alt="Success Checkmark" />
+
+  <h1>🎉 Deposit Request Submitted!</h1>
+  <p>Thank you for submitting your deposit. Our team will verify your payment and update your balance shortly.</p>
+  <button onclick="goToDashboard()">Back to Dashboard</button>
+
+  <script>
+    function goToDashboard() {
+      window.location.href = "buyer.html";
+    }
+  </script>
+</body>
+</html>

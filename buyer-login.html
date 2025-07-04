@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Buyer Login - JunkDrop</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet" />
+  <style>
+    body {
+      background: linear-gradient(135deg, #d6f5ff, #e6f2ff);
+      font-family: 'Poppins', sans-serif;
+      color: #333;
+      height: 100vh;
+      margin: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 15px;
+    }
+    .auth-box {
+      background: rgba(255, 255, 255, 0.95);
+      border-radius: 20px;
+      padding: 30px 40px;
+      width: 380px;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+      text-align: center;
+    }
+    h1 {
+      margin-bottom: 25px;
+      font-weight: 700;
+      font-size: 2rem;
+      color: #006699;
+    }
+    input {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 16px;
+      outline: none;
+    }
+    button {
+      background: #006699;
+      color: white;
+      padding: 14px 0;
+      width: 100%;
+      border: none;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 16px;
+      cursor: pointer;
+      margin-top: 10px;
+      transition: background 0.3s ease;
+    }
+    button:hover {
+      background: #004466;
+    }
+    .message {
+      margin-top: 12px;
+      font-weight: 600;
+      min-height: 20px;
+      color: red;
+    }
+    .link {
+      margin-top: 15px;
+    }
+    .link a {
+      color: #006699;
+      text-decoration: none;
+      font-weight: 600;
+    }
+    .link a:hover {
+      text-decoration: underline;
+    }
+  </style>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
+    import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCbqW6QePM7rw4qprDnqWYsVBJ6V7Mym0E",
+      authDomain: "junkidrop.firebaseapp.com",
+      projectId: "junkidrop",
+      storageBucket: "junkidrop.firebasestorage.app",
+      messagingSenderId: "1093337835515",
+      appId: "1:1093337835515:web:99f507ebaef6ef70080d5e",
+      measurementId: "G-7RSFBBHJ0T"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    window.login = async function () {
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value;
+      const errorEl = document.getElementById('error');
+      errorEl.textContent = '';
+
+      try {
+        const userCredential = await signInWithEmailAndPassword(auth, email, password);
+        const user = userCredential.user;
+
+        if (!user.emailVerified) {
+          errorEl.textContent = 'Please verify your email before logging in. Check your spam folder for the email.';
+          await auth.signOut();
+          return;
+        }
+
+        window.location.href = 'buyer.html'; // ✅ Redirect to buyer.html after successful login
+      } catch (error) {
+        errorEl.textContent = error.message;
+      }
+    };
+
+    onAuthStateChanged(auth, (user) => {
+      if (user && user.emailVerified) {
+        window.location.href = 'buyer.html'; // ✅ Redirect to buyer.html if already logged in
+      }
+    });
+  </script>
+</head>
+<body>
+  <div class="auth-box">
+    <h1>Buyer Login</h1>
+    <input type="email" id="email" placeholder="Email" />
+    <input type="password" id="password" placeholder="Password" />
+    <button onclick="login()">Sign In</button>
+    <p class="message" id="error"></p>
+    <p class="link">Don't have an account? <a href="buyer-signup.html">Sign Up</a></p>
+  </div>
+</body>
+</html>

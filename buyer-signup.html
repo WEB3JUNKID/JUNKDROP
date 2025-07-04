@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Buyer Sign Up - JunkDrop</title>
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      margin: 0;
+      background: linear-gradient(135deg, #a3cef1, #dbe9f4);
+      font-family: 'Poppins', sans-serif;
+      color: #1a2a3a;
+      height: 100vh;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 20px;
+    }
+
+    .auth-container {
+      background: #fff;
+      border-radius: 18px;
+      width: 400px;
+      max-width: 95vw;
+      padding: 40px 35px;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
+      text-align: center;
+    }
+
+    h1 {
+      margin-bottom: 30px;
+      font-weight: 600;
+      font-size: 2.2rem;
+      color: #0077b6;
+      letter-spacing: 1px;
+    }
+
+    input[type="email"],
+    input[type="password"] {
+      width: 100%;
+      padding: 15px 14px;
+      margin-bottom: 22px;
+      border: 1.8px solid #c3d2e8;
+      border-radius: 12px;
+      font-size: 1rem;
+      transition: border-color 0.3s ease;
+      outline-offset: 2px;
+      outline-color: transparent;
+    }
+    input[type="email"]:focus,
+    input[type="password"]:focus {
+      border-color: #0077b6;
+      outline-color: #90caf9;
+    }
+
+    button {
+      width: 100%;
+      padding: 16px;
+      background: #0077b6;
+      border: none;
+      border-radius: 14px;
+      color: white;
+      font-weight: 600;
+      font-size: 1.1rem;
+      cursor: pointer;
+      box-shadow: 0 6px 12px rgba(0, 119, 182, 0.4);
+      transition: background-color 0.3s ease, box-shadow 0.3s ease;
+      letter-spacing: 0.7px;
+    }
+    button:hover {
+      background: #005f86;
+      box-shadow: 0 8px 20px rgba(0, 95, 134, 0.6);
+    }
+
+    .message {
+      color: #e63946;
+      font-weight: 600;
+      min-height: 24px;
+      margin-top: 12px;
+      user-select: none;
+    }
+
+    .link {
+      margin-top: 28px;
+      font-size: 0.95rem;
+      color: #555;
+    }
+    .link a {
+      color: #0077b6;
+      text-decoration: none;
+      font-weight: 600;
+      transition: color 0.3s ease;
+    }
+    .link a:hover {
+      color: #004466;
+      text-decoration: underline;
+    }
+
+    footer {
+      position: fixed;
+      bottom: 8px;
+      width: 100%;
+      text-align: center;
+      font-size: 0.8rem;
+      color: #888;
+      font-family: monospace;
+      user-select: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="auth-container">
+    <h1>Create Buyer Account</h1>
+    <input type="email" id="email" placeholder="Email address" autocomplete="email" />
+    <input type="password" id="password" placeholder="Password (min 6 characters)" autocomplete="new-password" />
+    <button onclick="signup()">Sign Up</button>
+    <p class="message" id="error"></p>
+    <p class="link">Already have an account? <a href="buyer-login.html">Sign In here</a></p>
+  </div>
+
+  <footer>JunkDrop &copy; 2025</footer>
+
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
+    import { getAuth, createUserWithEmailAndPassword, sendEmailVerification } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCbqW6QePM7rw4qprDnqWYsVBJ6V7Mym0E",
+      authDomain: "junkidrop.firebaseapp.com",
+      projectId: "junkidrop",
+      storageBucket: "junkidrop.firebasestorage.app",
+      messagingSenderId: "1093337835515",
+      appId: "1:1093337835515:web:99f507ebaef6ef70080d5e",
+      measurementId: "G-7RSFBBHJ0T"
+    };
+
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+
+    window.signup = async function () {
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value;
+      const errorEl = document.getElementById('error');
+      errorEl.textContent = '';
+
+      if (!email) {
+        errorEl.textContent = "Email is required.";
+        return;
+      }
+      if (password.length < 6) {
+        errorEl.textContent = "Password must be at least 6 characters.";
+        return;
+      }
+
+      try {
+        const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        const user = userCredential.user;
+
+        await sendEmailVerification(user, {
+          url: 'https://web3junkid.github.io/JUNKDROP-/buyer-login.html',
+          handleCodeInApp: false
+        });
+
+        alert("Verification email sent! Please check your inbox and spam folder.");
+        window.location.href = 'buyer-login.html';
+      } catch (err) {
+        errorEl.textContent = err.message;
+      }
+    };
+  </script>
+</body>
+</html>
