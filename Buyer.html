@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Buyer Dashboard - JunkDrop</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <style>
+    /* (Existing styles unchanged for brevity) */
+    body {
+      background: linear-gradient(135deg, #d6f5ff, #e6f2ff);
+      font-family: Arial, sans-serif;
+      color: #333;
+      margin: 0;
+      padding: 20px;
+    }
+    .header { text-align: center; margin-bottom: 20px; }
+    .header h1 { color: #006699; }
+    .section { background: white; padding: 20px; border-radius: 12px; margin-bottom: 20px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+    h2 { color: #006699; margin-bottom: 15px; }
+    .service-box { margin-bottom: 15px; }
+    .service-box input { width: 80px; padding: 8px; margin-left: 10px; border-radius: 6px; border: 1px solid #ccc; text-align: center; }
+    .service-box button { margin-left: 15px; padding: 8px 16px; background: #006699; color: white; border: none; border-radius: 6px; cursor: pointer; }
+    .service-box button:hover { background: #005580; }
+    .balance { font-size: 24px; margin: 10px 0; color: #009933; }
+    .deposit-btn, .logout-btn, .customer-service-btn {
+      background: #006699; color: white; padding: 12px 20px; border: none; border-radius: 8px; cursor: pointer; width: 100%; font-size: 16px; margin-top: 10px;
+    }
+    .logout-btn { background: #ff4d4d; margin-top: 20px; }
+    .customer-service-btn:hover { background: #005580; }
+    #depositModal {
+      display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+      background: rgba(0,0,0,0.6); justify-content: center; align-items: center; z-index: 1000;
+    }
+    #depositModalContent {
+      background: white; padding: 20px; border-radius: 10px; width: 320px; box-shadow: 0 0 10px rgba(0,0,0,0.25); position: relative;
+    }
+    #depositModalContent h3 { color: #006699; margin-top: 0; }
+    #depositModalContent p { font-size: 14px; margin: 10px 0; word-break: break-word; font-weight: bold; color: #006699; }
+    #depositModalContent label { font-weight: 600; display: block; margin-top: 12px; }
+    #depositModalContent input { width: 100%; padding: 8px; margin-top: 6px; border-radius: 6px; border: 1px solid #ccc; box-sizing: border-box; font-size: 14px; }
+    #depositModalContent button {
+      margin-top: 15px; padding: 10px; width: 100%; border: none; border-radius: 6px; font-size: 16px; cursor: pointer; color: white; background: #006699; transition: background 0.3s ease;
+    }
+    #depositModalContent button:hover { background: #004466; }
+    #depositCancelBtn { background: #ff4d4d !important; margin-top: 8px; }
+  </style>
+
+  <!-- Firebase (Compat) SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+</head>
+<body>
+
+  <div class="header">
+    <h1>Welcome to JunkDrop Buyer Dashboard</h1>
+    <p>Order Web3 Airdrop Referral Services</p>
+  </div>
+
+  <div class="section">
+    <h2>Testnet Airdrop Sign-ups ($0.10 each)</h2>
+    <div class="service-box">
+      <label>How many sign-ups:</label>
+      <input type="number" id="testnet-qty" min="1" value="1" />
+      <button onclick="orderTestnet()">Order</button>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>Other Airdrop Sign-ups ($0.05 each)</h2>
+    <div class="service-box">
+      <label>How many sign-ups:</label>
+      <input type="number" id="other-qty" min="1" value="1" />
+      <button onclick="orderOther()">Order</button>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>Your Funds Wallet</h2>
+    <p>Balance: <span class="balance" id="balance">$0.00</span></p>
+    <button class="deposit-btn" onclick="showDepositModal()">Deposit Funds</button>
+  </div>
+
+  <div class="section">
+    <h2>Customer Service</h2>
+    <p>If you need help, send a report to: <strong><a href="mailto:web3.junkid@gmail.com">web3.junkid@gmail.com</a></strong></p>
+    <button class="customer-service-btn" onclick="contactSupport()">Contact Support</button>
+  </div>
+
+  <button class="logout-btn" onclick="logout()">Logout</button>
+
+  <!-- Deposit Modal -->
+  <div id="depositModal">
+    <div id="depositModalContent">
+      <h3>Deposit Funds</h3>
+      <p>Please send <strong>USDC on Base (ETH Mainnet)</strong> to the address below and enter your transaction hash:</p>
+      <p><strong>Wallet Address:</strong> 0x6eD2F5Bb78dfc51EdB6d5A6b146C40456d0E6f4C</p>
+
+      <label for="deposit-amount">Amount Sent ($):</label>
+      <input type="number" id="deposit-amount" min="0.01" step="0.01" placeholder="Enter amount sent" />
+
+      <label for="deposit-tx">Transaction Hash (Tx Receipt):</label>
+      <input type="text" id="deposit-tx" placeholder="Paste your transaction hash here" />
+
+      <button onclick="submitDeposit()">Submit Deposit</button>
+      <button id="depositCancelBtn" onclick="closeDepositModal()">Cancel</button>
+    </div>
+  </div>
+
+<script>
+  // --- Firebase Initialization ---
+  const firebaseConfig = {
+    apiKey: "AIzaSyCbqW6QePM7rw4qprDnqWYsVBJ6V7Mym0E",
+    authDomain: "junkidrop.firebaseapp.com",
+    projectId: "junkidrop",
+    storageBucket: "junkidrop.appspot.com",
+    messagingSenderId: "1093337835515",
+    appId: "1:1093337835515:web:99f507ebaef6ef70080d5e"
+  };
+  firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
+  const db = firebase.firestore();
+  let userId;
+
+  // --- Auth Listener ---
+  auth.onAuthStateChanged(user => {
+    if (!user) {
+      // If not logged in, redirect to login page
+      window.location.href = "index.html";
+    } else {
+      userId = user.uid;
+      loadBalance();
+    }
+  });
+
+  // Load and display user's balance from the 'buyers' collection
+  function loadBalance() {
+    const buyerDoc = db.collection('Buyers').doc(userId);
+    buyerDoc.get().then(doc => {
+      if (doc.exists) {
+        const balance = doc.data().balance || 0;
+        document.getElementById('balance').textContent = `$${balance.toFixed(2)}`;
+      } else {
+        // If no document, create one with 0 balance
+        buyerDoc.set({ balance: 0 });
+        document.getElementById('balance').textContent = `$0.00`;
+      }
+    }).catch(err => {
+      console.error("Error loading balance:", err);
+    });
+  }
+
+  // Show deposit modal
+  function showDepositModal() {
+    document.getElementById('depositModal').style.display = 'flex';
+  }
+  function closeDepositModal() {
+    document.getElementById('depositModal').style.display = 'none';
+  }
+
+  // Submit deposit to 'Depositrequest' collection
+  function submitDeposit() {
+    const amount = parseFloat(document.getElementById('deposit-amount').value);
+    const txHash = document.getElementById('deposit-tx').value.trim();
+    if (isNaN(amount) || amount <= 0) {
+      alert("Enter a valid amount sent.");
+      return;
+    }
+    if (!txHash) {
+      alert("Please enter the transaction hash.");
+      return;
+    }
+    const user = auth.currentUser;
+    if (!user) {
+      alert("You must be logged in to submit a deposit.");
+      return;
+    }
+    db.collection('Depositrequest').add({
+      userId: user.uid,
+      amount: amount,
+      txHash: txHash,
+      timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+      status: "pending"
+    })
+    .then(() => {
+      alert("Deposit submitted successfully! Your deposit will be reviewed by admin.");
+      // Reset form and close modal
+      document.getElementById('deposit-amount').value = '';
+      document.getElementById('deposit-tx').value = '';
+      closeDepositModal();
+      // Redirect to confirmation page
+      window.location.href = "order-received.html";
+    })
+    .catch(error => {
+      console.error("Error submitting deposit:", error);
+      alert("Error submitting deposit. Please try again.");
+    });
+  }
+
+  // Place a Testnet order: add to 'Buyorder' collection
+  function orderTestnet() {
+    const qty = parseInt(document.getElementById('testnet-qty').value);
+    if (qty < 1) {
+      return alert("Enter a valid quantity.");
+    }
+    const price = qty * 0.10;
+    const user = auth.currentUser;
+    if (!user) {
+      return alert("You must be logged in to place an order.");
+    }
+    // Add order to Firestore
+    db.collection('Buyorder').add({
+      userId: user.uid,
+      quantity: qty,
+      totalPrice: price.toFixed(2),
+      type: "Testnet",
+      status: "pending",
+      timestamp: firebase.firestore.FieldValue.serverTimestamp()
+    })
+    .then(() => {
+      alert(`You have ordered ${qty} Testnet Sign-ups for $${price.toFixed(2)}.\n\nAdmin will review your order.`);
+    })
+    .catch(error => {
+      console.error("Error placing order:", error);
+      alert("Error placing order. Please try again.");
+    });
+  }
+
+  // Place an "Other" order: add to 'Buyorder' collection
+  function orderOther() {
+    const qty = parseInt(document.getElementById('other-qty').value);
+    if (qty < 1) {
+      return alert("Enter a valid quantity.");
+    }
+    const price = qty * 0.05;
+    const user = auth.currentUser;
+    if (!user) {
+      return alert("You must be logged in to place an order.");
+    }
+    db.collection('Buyorder').add({
+      userId: user.uid,
+      quantity: qty,
+      totalPrice: price.toFixed(2),
+      type: "Other",
+      status: "pending",
+      timestamp: firebase.firestore.FieldValue.serverTimestamp()
+    })
+    .then(() => {
+      alert(`You have ordered ${qty} Airdrop Sign-ups for $${price.toFixed(2)}.\n\nAdmin will review your order.`);
+    })
+    .catch(error => {
+      console.error("Error placing order:", error);
+      alert("Error placing order. Please try again.");
+    });
+  }
+
+  // Logout
+  function logout() {
+    auth.signOut().then(() => {
+      window.location.href = "index.html";
+    });
+  }
+
+  // Contact Support via mailto link
+  function contactSupport() {
+    window.location.href = "mailto:web3.junkid@gmail.com?subject=JunkDrop%20Buyer%20Support%20Request";
+  }
+</script>
+
+</body>
+</html>
