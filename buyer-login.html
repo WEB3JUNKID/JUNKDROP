@@ -17,6 +17,7 @@
       align-items: center;
       padding: 15px;
     }
+
     .auth-box {
       background: rgba(255, 255, 255, 0.95);
       border-radius: 20px;
@@ -25,12 +26,14 @@
       box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
       text-align: center;
     }
+
     h1 {
       margin-bottom: 25px;
       font-weight: 700;
       font-size: 2rem;
       color: #006699;
     }
+
     input {
       width: 100%;
       padding: 12px;
@@ -40,6 +43,23 @@
       font-size: 16px;
       outline: none;
     }
+
+    .checkbox-container {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      font-size: 0.9rem;
+      margin-top: -5px;
+      margin-bottom: 15px;
+      color: #444;
+    }
+
+    .checkbox-container input {
+      width: auto;
+      margin-right: 8px;
+      transform: scale(1.1);
+    }
+
     button {
       background: #006699;
       color: white;
@@ -53,23 +73,28 @@
       margin-top: 10px;
       transition: background 0.3s ease;
     }
+
     button:hover {
       background: #004466;
     }
+
     .message {
       margin-top: 12px;
       font-weight: 600;
       min-height: 20px;
       color: red;
     }
+
     .link {
       margin-top: 15px;
     }
+
     .link a {
       color: #006699;
       text-decoration: none;
       font-weight: 600;
     }
+
     .link a:hover {
       text-decoration: underline;
     }
@@ -108,7 +133,7 @@
           return;
         }
 
-        window.location.href = 'Buyer.html'; // ✅ Redirect to buyer.html after successful login
+        window.location.href = 'Buyer.html';
       } catch (error) {
         errorEl.textContent = error.message;
       }
@@ -116,16 +141,27 @@
 
     onAuthStateChanged(auth, (user) => {
       if (user && user.emailVerified) {
-        window.location.href = 'Buyer.html'; // ✅ Redirect to buyer.html if already logged in
+        window.location.href = 'Buyer.html';
       }
     });
+
+    window.togglePassword = function () {
+      const passwordInput = document.getElementById('password');
+      passwordInput.type = passwordInput.type === 'password' ? 'text' : 'password';
+    };
   </script>
 </head>
 <body>
   <div class="auth-box">
     <h1>Buyer Login</h1>
-    <input type="email" id="email" placeholder="Email" />
-    <input type="password" id="password" placeholder="Password" />
+    <input type="email" id="email" placeholder="Email" autocomplete="email" />
+    <input type="password" id="password" placeholder="Password" autocomplete="current-password" />
+
+    <div class="checkbox-container">
+      <input type="checkbox" id="showPassword" onclick="togglePassword()" />
+      <label for="showPassword">Show Password</label>
+    </div>
+
     <button onclick="login()">Sign In</button>
     <p class="message" id="error"></p>
     <p class="link">Don't have an account? <a href="buyer-signup.html">Sign Up</a></p>
