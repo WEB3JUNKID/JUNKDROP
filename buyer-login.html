@@ -108,7 +108,7 @@
           return;
         }
 
-        window.location.href = 'buyer.html'; // ✅ Redirect to buyer.html after successful login
+        window.location.href = 'Buyer.html'; // ✅ Redirect to buyer.html after successful login
       } catch (error) {
         errorEl.textContent = error.message;
       }
@@ -116,7 +116,7 @@
 
     onAuthStateChanged(auth, (user) => {
       if (user && user.emailVerified) {
-        window.location.href = 'buyer.html'; // ✅ Redirect to buyer.html if already logged in
+        window.location.href = 'Buyer.html'; // ✅ Redirect to buyer.html if already logged in
       }
     });
   </script>
