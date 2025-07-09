@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Profile - JunkDrop</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;900&display=swap" rel="stylesheet" />
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: 'Poppins', sans-serif;
+      transition: background 0.3s ease, color 0.3s ease;
+      min-height: 100vh;
+    }
+
+    body.light {
+      background: linear-gradient(135deg, #d6f5ff, #e6f2ff);
+      color: #333;
+    }
+    body.dark {
+      background: #121212;
+      color: #f1f1f1;
+    }
+    body.dark .profile-box,
+    body.dark .header,
+    body.dark #mobileNav {
+      background: #1e1e1e;
+      color: #f1f1f1;
+    }
+    body.dark .nav-links a,
+    body.dark #mobileNav a,
+    body.dark .logo-text,
+    body.dark .close-btn,
+    body.dark #balanceDisplay {
+      color: #a8e6ff;
+    }
+    body.dark .profile-box button,
+    body.dark button {
+      background: #005577;
+    }
+    body.dark input {
+      background: #2a2a2a;
+      color: #fff;
+      border: 1px solid #555;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #fff;
+      padding: 15px 25px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .logo svg { height: 50px; }
+    .logo-text {
+      font-weight: 900;
+      font-size: 24px;
+      color: #006699;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 25px;
+    }
+
+    .nav-links a {
+      text-decoration: none;
+      color: #006699;
+      font-weight: 600;
+      font-size: 16px;
+    }
+
+    .nav-links a:hover { color: #003344; }
+
+    .menu {
+      font-size: 28px;
+      cursor: pointer;
+      display: none;
+    }
+
+    .theme-toggle {
+      cursor: pointer;
+      padding: 6px 12px;
+      font-size: 14px;
+      background: #eee;
+      border-radius: 6px;
+      margin-left: 15px;
+      font-weight: 600;
+    }
+    body.dark .theme-toggle {
+      background: #333;
+      color: #fff;
+    }
+
+    #mobileNav {
+      position: fixed;
+      top: 0;
+      right: -60%;
+      width: 60%;
+      height: 100%;
+      background: #ffffff;
+      box-shadow: -2px 0 12px rgba(0, 0, 0, 0.15);
+      display: flex;
+      flex-direction: column;
+      padding: 25px;
+      transition: right 0.3s ease;
+      z-index: 999;
+    }
+
+    #mobileNav.open { right: 0; }
+
+    #mobileNav a {
+      text-decoration: none;
+      color: #006699;
+      font-weight: 600;
+      margin: 18px 0;
+      font-size: 18px;
+    }
+
+    #balanceDisplay {
+      margin: 20px 0 10px;
+      font-size: 18px;
+      font-weight: 700;
+      color: #009933;
+    }
+
+    .close-btn {
+      font-size: 26px;
+      font-weight: bold;
+      cursor: pointer;
+      color: #006699;
+      margin-left: auto;
+    }
+
+    .main {
+      padding: 40px 20px;
+      text-align: center;
+    }
+
+    h1 {
+      color: #006699;
+      font-size: 2.2rem;
+      margin-bottom: 25px;
+    }
+
+    .profile-box {
+      background: #fff;
+      border-radius: 14px;
+      padding: 30px 20px;
+      max-width: 450px;
+      margin: 0 auto;
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+      text-align: left;
+    }
+
+    .profile-section {
+      margin-bottom: 25px;
+    }
+
+    .profile-section label {
+      font-weight: 600;
+      color: #004466;
+      display: block;
+      margin-bottom: 10px;
+    }
+
+    .profile-section span {
+      font-size: 17px;
+      font-weight: 500;
+      color: #222;
+    }
+
+    input[type="text"] {
+      width: 100%;
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid #ccc;
+      font-size: 16px;
+      margin-bottom: 15px;
+    }
+
+    button {
+      background: #006699;
+      color: #fff;
+      border: none;
+      padding: 12px 20px;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      width: 100%;
+    }
+
+    button:hover {
+      background: #004466;
+    }
+
+    @media (max-width: 768px) {
+      .nav-links { display: none; }
+      .menu { display: block; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- Firebase SDKs -->
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+
+<!-- Header -->
+<div class="header">
+  <div class="logo">
+    <svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" stop-color="#a8e6ff" />
+          <stop offset="100%" stop-color="#fff9f4" />
+        </linearGradient>
+      </defs>
+      <rect width="120" height="120" fill="#000000" rx="20" ry="20" />
+      <text x="20" y="85" font-family="Poppins, sans-serif" font-size="70" font-weight="900" fill="url(#grad1)">JK</text>
+      <line x1="70" y1="20" x2="90" y2="100" stroke="#a8e6ff" stroke-width="6" stroke-linecap="round" />
+    </svg>
+    <span class="logo-text">JunkDrop</span>
+  </div>
+  <div class="nav-links">
+    <a href="Buyer.html">Dashboard</a>
+    <a href="deposit.html">Add Funds</a>
+    <a href="services.html">Buy Services</a>
+    <a href="order-history.html">History</a>
+  </div>
+  <div style="display: flex; align-items: center; gap: 10px;">
+    <div class="theme-toggle" onclick="toggleTheme()">🌓 Mode</div>
+    <div class="menu" onclick="toggleMenu()">☰</div>
+  </div>
+</div>
+
+<!-- Mobile Menu -->
+<div id="mobileNav">
+  <div style="display: flex; align-items: center; justify-content: space-between;">
+    <div id="balanceDisplay">Your Asset: $0.00</div>
+    <div class="close-btn" onclick="toggleMenu()">✕</div>
+  </div>
+  <a href="Buyer.html">Dashboard</a>
+  <a href="deposit.html">Add Funds</a>
+  <a href="services.html">Buy Services</a>
+  
+  <a href="#" onclick="logout()">🚪 Logout</a>
+</div>
+
+<!-- Main -->
+<div class="main">
+  <h1>Your Profile</h1>
+  <div class="profile-box">
+    <div class="profile-section">
+      <label>Balance:</label>
+      <span id="liveBalance">$0.00</span>
+    </div>
+
+    <div class="profile-section" id="usernameSection">
+      <label>Username:</label>
+      <span id="usernameDisplay">Loading...</span>
+      <button onclick="toggleEdit()">Change Username</button>
+    </div>
+
+    <div class="profile-section" id="editSection" style="display: none;">
+      <input type="text" id="usernameInput" placeholder="Enter new username" />
+      <button onclick="saveUsername()">Save</button>
+    </div>
+
+    <div class="profile-section">
+      <button onclick="logout()">Logout</button>
+    </div>
+  </div>
+</div>
+
+<script>
+  const firebaseConfig = {
+    apiKey: "AIzaSyCbqW6QePM7rw4qprDnqWYsVBJ6V7Mym0E",
+    authDomain: "junkidrop.firebaseapp.com",
+    projectId: "junkidrop",
+    storageBucket: "junkidrop.appspot.com",
+    messagingSenderId: "1093337835515",
+    appId: "1:1093337835515:web:99f507ebaef6ef70080d5e"
+  };
+
+  firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
+  const db = firebase.firestore();
+
+  let buyerRef = null;
+
+  auth.onAuthStateChanged(user => {
+    if (!user) {
+      window.location.href = "Loginindex.html";
+      return;
+    }
+
+    buyerRef = db.collection("Buyers").doc(user.uid);
+
+    buyerRef.onSnapshot(doc => {
+      const data = doc.data();
+      const username = data?.username || "Not set";
+      const balance = data?.balance || 0;
+
+      document.getElementById("liveBalance").textContent = `$${balance.toFixed(2)}`;
+      document.getElementById("balanceDisplay").textContent = `Your Asset: $${balance.toFixed(2)}`;
+      document.getElementById("usernameDisplay").textContent = username;
+    });
+  });
+
+  function toggleMenu() {
+    document.getElementById("mobileNav").classList.toggle("open");
+  }
+
+  function toggleEdit() {
+    document.getElementById("editSection").style.display = "block";
+  }
+
+  function saveUsername() {
+    const newUsername = document.getElementById("usernameInput").value.trim();
+    if (!newUsername) return alert("Username cannot be empty.");
+    buyerRef.set({ username: newUsername }, { merge: true })
+      .then(() => {
+        alert("Username updated!");
+        document.getElementById("editSection").style.display = "none";
+      })
+      .catch(err => alert("Error: " + err.message));
+  }
+
+  function logout() {
+    auth.signOut().then(() => {
+      window.location.href = "Loginindex.html";
+    });
+  }
+
+  function toggleTheme() {
+    const current = document.body.classList.contains('dark') ? 'dark' : 'light';
+    const newTheme = current === 'light' ? 'dark' : 'light';
+    document.body.classList.remove(current);
+    document.body.classList.add(newTheme);
+    localStorage.setItem('theme', newTheme);
+  }
+
+  (function applySavedTheme() {
+    const saved = localStorage.getItem('theme') || 'light';
+    document.body.classList.add(saved);
+  })();
+</script>
+
+</body>
+</html>
