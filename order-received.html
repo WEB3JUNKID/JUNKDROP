@@ -1,65 +1,85 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html><html lang="en">
 <head>
   <meta charset="UTF-8" />
   <title>Order Received - JunkDrop</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;900&display=swap" rel="stylesheet">
   <style>
-    body {
-      background: linear-gradient(135deg, #d6f5ff, #e6f2ff);
-      font-family: Arial, sans-serif;
-      color: #333;
+    * {
+      box-sizing: border-box;
+      padding: 0;
       margin: 0;
-      padding: 40px 20px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 100vh;
-      text-align: center;
-    }
-    img.checkmark {
-      width: 80px;
-      height: 80px;
-      margin-bottom: 20px;
-    }
-    h1 {
-      color: #006699;
-      margin-bottom: 20px;
-    }
-    p {
-      font-size: 18px;
-      margin-bottom: 40px;
-      max-width: 400px;
-      color: #004466;
-    }
-    button {
-      background: #006699;
-      color: white;
-      border: none;
-      padding: 14px 28px;
-      border-radius: 8px;
-      cursor: pointer;
-      font-size: 18px;
-      transition: background 0.3s ease;
-    }
-    button:hover {
-      background: #004466;
-    }
+    }body {
+  background: linear-gradient(135deg, #020024, #090979, #00d4ff);
+  font-family: 'Poppins', sans-serif;
+  color: #fff;
+  margin: 0;
+  padding: 40px 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  text-align: center;
+}
+
+.glass {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border-radius: 16px;
+  padding: 40px 30px;
+  max-width: 420px;
+  width: 100%;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+}
+
+img.checkmark {
+  width: 80px;
+  height: 80px;
+  margin-bottom: 20px;
+}
+
+h1 {
+  color: #00ffc3;
+  font-size: 24px;
+  margin-bottom: 20px;
+}
+
+p {
+  font-size: 16px;
+  color: #c2e9ff;
+  margin-bottom: 30px;
+}
+
+button {
+  background: #00ffc3;
+  color: #000;
+  border: none;
+  padding: 12px 24px;
+  border-radius: 10px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.3s ease, transform 0.2s ease;
+}
+
+button:hover {
+  background: #00e6b0;
+  transform: scale(1.03);
+}
+
   </style>
 </head>
 <body>
-  <!-- Animated checkmark GIF -->
-  <img class="checkmark" src="https://i.gifer.com/7efs.gif" alt="Success Checkmark" />
-
-  <h1>🎉 Deposit Request Submitted!</h1>
-  <p>Thank you for submitting your deposit. Our team will verify your payment and update your balance shortly.</p>
-  <button onclick="goToDashboard()">Back to Dashboard</button>
-
-  <script>
+  <div class="glass">
+    <img class="checkmark" src="https://i.gifer.com/7efs.gif" alt="Success Checkmark" />
+    <h1>🎉 Deposit Request Submitted!</h1>
+    <p>Thank you for submitting your deposit. Our team will verify your payment and update your balance shortly.</p>
+    <button onclick="goToDashboard()">Back to Dashboard</button>
+  </div>  <script>
     function goToDashboard() {
       window.location.href = "Buyer.html";
     }
-  </script>
-</body>
+  </script></body>
 </html>
