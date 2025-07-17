@@ -2,155 +2,94 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Buyer Sign Up - JunkDrop</title>
-
-  <!-- Google Fonts -->
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
-
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet" />
   <style>
-    * {
-      box-sizing: border-box;
-    }
     body {
-      margin: 0;
-      background: linear-gradient(135deg, #a3cef1, #dbe9f4);
+      background: linear-gradient(135deg, #0a0f1c, #1b2232);
       font-family: 'Poppins', sans-serif;
-      color: #1a2a3a;
+      color: #ffffff;
       height: 100vh;
+      margin: 0;
       display: flex;
       justify-content: center;
       align-items: center;
-      padding: 20px;
+      padding: 15px;
     }
 
-    .auth-container {
-      background: #fff;
-      border-radius: 18px;
-      width: 400px;
-      max-width: 95vw;
-      padding: 40px 35px;
-      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.12);
+    .auth-box {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 20px;
+      padding: 30px 40px;
+      width: 380px;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
       text-align: center;
+      backdrop-filter: blur(12px);
     }
 
     h1 {
-      margin-bottom: 30px;
-      font-weight: 600;
-      font-size: 2.2rem;
-      color: #0077b6;
-      letter-spacing: 1px;
+      margin-bottom: 25px;
+      font-weight: 700;
+      font-size: 2rem;
+      color: #00ffc3;
     }
 
-    input[type="email"],
-    input[type="password"] {
+    input {
       width: 100%;
-      padding: 15px 14px;
-      margin-bottom: 22px;
-      border: 1.8px solid #c3d2e8;
-      border-radius: 12px;
-      font-size: 1rem;
-      transition: border-color 0.3s ease;
-      outline-offset: 2px;
-      outline-color: transparent;
-    }
-    input[type="email"]:focus,
-    input[type="password"]:focus {
-      border-color: #0077b6;
-      outline-color: #90caf9;
+      padding: 12px;
+      margin: 10px 0;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      font-size: 16px;
+      background-color: rgba(255,255,255,0.08);
+      color: #ffffff;
+      outline: none;
     }
 
-    .checkbox-container {
-      display: flex;
-      align-items: center;
-      justify-content: flex-start;
-      font-size: 0.9rem;
-      margin-top: -14px;
-      margin-bottom: 18px;
-      color: #444;
-    }
-
-    .checkbox-container input {
-      width: auto;
-      margin-right: 8px;
-      transform: scale(1.1);
+    input::placeholder {
+      color: #bbb;
     }
 
     button {
+      background: #00ffc3;
+      color: #000000;
+      padding: 14px 0;
       width: 100%;
-      padding: 16px;
-      background: #0077b6;
       border: none;
-      border-radius: 14px;
-      color: white;
+      border-radius: 10px;
       font-weight: 600;
-      font-size: 1.1rem;
+      font-size: 16px;
       cursor: pointer;
-      box-shadow: 0 6px 12px rgba(0, 119, 182, 0.4);
-      transition: background-color 0.3s ease, box-shadow 0.3s ease;
-      letter-spacing: 0.7px;
+      margin-top: 10px;
+      transition: background 0.3s ease;
     }
 
     button:hover {
-      background: #005f86;
-      box-shadow: 0 8px 20px rgba(0, 95, 134, 0.6);
+      background: #00bfa5;
     }
 
     .message {
-      color: #e63946;
-      font-weight: 600;
-      min-height: 24px;
       margin-top: 12px;
-      user-select: none;
+      font-weight: 600;
+      min-height: 20px;
+      color: #ff5252;
     }
 
     .link {
-      margin-top: 28px;
-      font-size: 0.95rem;
-      color: #555;
+      margin-top: 15px;
     }
 
     .link a {
-      color: #0077b6;
+      color: #00ffc3;
       text-decoration: none;
       font-weight: 600;
-      transition: color 0.3s ease;
     }
 
     .link a:hover {
-      color: #004466;
       text-decoration: underline;
     }
-
-    footer {
-      position: fixed;
-      bottom: 8px;
-      width: 100%;
-      text-align: center;
-      font-size: 0.8rem;
-      color: #888;
-      font-family: monospace;
-      user-select: none;
-    }
   </style>
-</head>
-<body>
-  <div class="auth-container">
-    <h1>Create Buyer Account</h1>
-    <input type="email" id="email" placeholder="Email address" autocomplete="email" />
-    <input type="password" id="password" placeholder="Password (min 6 characters)" autocomplete="new-password" />
-    
-    <div class="checkbox-container">
-      <input type="checkbox" id="showPassword" onclick="togglePassword()" />
-      <label for="showPassword">Show Password</label>
-    </div>
-
-    <button onclick="signup()">Sign Up</button>
-    <p class="message" id="error"></p>
-    <p class="link">Already have an account? <a href="buyer-login.html">Sign In here</a></p>
-  </div>
-
-  <footer>JunkDrop &copy; 2025</footer>
 
   <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-app.js";
@@ -179,6 +118,7 @@
         errorEl.textContent = "Email is required.";
         return;
       }
+
       if (password.length < 6) {
         errorEl.textContent = "Password must be at least 6 characters.";
         return;
@@ -199,11 +139,16 @@
         errorEl.textContent = err.message;
       }
     };
-
-    window.togglePassword = function () {
-      const passwordInput = document.getElementById('password');
-      passwordInput.type = passwordInput.type === 'password' ? 'text' : 'password';
-    };
   </script>
+</head>
+<body>
+  <div class="auth-box">
+    <h1>Create Buyer Account</h1>
+    <input type="email" id="email" placeholder="Email address" autocomplete="email" />
+    <input type="password" id="password" placeholder="Password (min 6 characters)" autocomplete="new-password" />
+    <button onclick="signup()">Sign Up</button>
+    <p class="message" id="error"></p>
+    <p class="link">Already have an account? <a href="buyer-login.html">Sign In</a></p>
+  </div>
 </body>
 </html>
