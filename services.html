@@ -1,168 +1,177 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
+<!DOCTYPE html><html lang="en"><head>
   <meta charset="UTF-8" />
-  <title>Buy Services - JunkDrop</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Buy Services - JunkDrop</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;900&display=swap" rel="stylesheet">
   <style>
-    body {
-      background: linear-gradient(135deg, #d6f5ff, #e6f2ff);
-      font-family: Arial, sans-serif;
-      color: #333;
+    * {
+      box-sizing: border-box;
       margin: 0;
-      padding: 20px;
+      padding: 0;
     }
+    body {
+      background: linear-gradient(135deg, #0a0f1c, #1b2232);
+      font-family: 'Poppins', sans-serif;
+      color: #fff;
+      padding: 80px 20px 40px;
+    }header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(10px);
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 20px;
+  z-index: 1000;
+}
 
-    h1 {
-      color: #006699;
-      text-align: center;
-      margin: 20px 0;
-    }
+header .logo {
+  font-size: 22px;
+  font-weight: 900;
+  color: #00ffc3;
+}
 
-    .section {
-      background: white;
-      padding: 20px;
-      border-radius: 12px;
-      margin-bottom: 20px;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-    }
+.menu {
+  font-size: 26px;
+  cursor: pointer;
+  color: #00ffc3;
+}
 
-    label {
-      display: block;
-      margin: 10px 0 5px;
-      font-weight: 600;
-    }
+#mobileNav {
+  position: fixed;
+  top: +4.5%;
+  right: -60%;
+  width: 60%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  box-shadow: -2px 0 12px rgba(0, 0, 0, 0.3);
+  display: flex;
+  flex-direction: column;
+  padding: 25px;
+  transition: right 0.3s ease;
+  z-index: 999;
+}
 
-    input, select {
-      width: 100%;
-      padding: 10px;
-      font-size: 16px;
-      border: 1px solid #ccc;
-      border-radius: 6px;
-    }
+#mobileNav.open {
+  right: 0;
+}
 
-    button {
-      margin-top: 20px;
-      width: 100%;
-      padding: 12px;
-      font-size: 16px;
-      background: #006699;
-      color: white;
-      border: none;
-      border-radius: 8px;
-      cursor: pointer;
-    }
+#mobileNav a {
+  display: block;
+  text-decoration: none;
+  color: #00ffc3;
+  font-weight: 600;
+  margin: 20px 0;
+  font-size: 18px;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
 
-    button:hover {
-      background: #004466;
-    }
 
-    .balance {
-      font-size: 18px;
-      color: #009933;
-      margin: 10px 0;
-    }
+#balanceDisplay, .asset-view {
+  font-size: 16px;
+  font-weight: bold;
+  color: #00ffc3;
+  text-align: center;
+  margin-top: 10px;
+}
 
-    .error {
-      color: red;
-      font-size: 14px;
-      margin-top: 10px;
-      text-align: center;
-    }
+h1 {
+  text-align: center;
+  color: #00ffc3;
+  margin-bottom: 30px;
+  font-size: 26px;
+}
 
-    /* Mobile Nav */
-    .top-nav {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
+.section {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
+  padding: 30px;
+  max-width: 500px;
+  margin: 0 auto;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
 
-    .menu {
-      font-size: 26px;
-      cursor: pointer;
-      color: #006699;
-      padding: 10px;
-    }
+label {
+  display: block;
+  margin-top: 15px;
+  margin-bottom: 5px;
+  font-weight: 600;
+}
 
-    #mobileNav {
-      position: fixed;
-      top: 0;
-      right: -100%;
-      width: 70%;
-      height: 100%;
-      background: #ffffff;
-      box-shadow: -2px 0 12px rgba(0, 0, 0, 0.15);
-      display: flex;
-      flex-direction: column;
-      padding: 25px 15px;
-      transition: right 0.3s ease;
-      z-index: 999;
-    }
+input, select {
+  width: 100%;
+  padding: 12px;
+  border-radius: 12px;
+  border: none;
+  font-size: 16px;
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+  margin-bottom: 10px;
+}
 
-    #mobileNav.open {
-      right: 0;
-    }
+button {
+  margin-top: 20px;
+  width: 100%;
+  padding: 14px;
+  font-size: 16px;
+  background: #00ffc3;
+  color: #000;
+  border: none;
+  border-radius: 12px;
+  font-weight: 600;
+  cursor: pointer;
+}
 
-    #mobileNav a {
-      text-decoration: none;
-      color: #006699;
-      font-weight: 600;
-      margin: 15px 0;
-      font-size: 18px;
-    }
+button:hover {
+  background: #00e6b0;
+}
 
-    #balanceDisplay {
-      font-size: 16px;
-      font-weight: bold;
-      color: #006699;
-    }
+.error {
+  color: #ff5f5f;
+  font-size: 14px;
+  margin-top: 10px;
+  text-align: center;
+}
+
   </style>
-
-  <!-- Firebase SDKs -->
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
   <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
 </head>
 <body>
-
-  <!-- Mobile Nav Toggle -->
-  <div class="top-nav">
-    <div class="balance">Your Balance: <span id="balanceAmount">$0.00</span></div>
+  <header>
+    <div class="logo">JunkDrop</div>
     <div class="menu" onclick="toggleMenu()">☰</div>
-  </div>
-
-  <!-- Mobile Nav -->
-  <div id="mobileNav">
+  </header>  <div id="mobileNav">
     <div style="display: flex; justify-content: space-between; align-items: center;">
       <div id="balanceDisplay">Your Asset: $0.00</div>
-      <div onclick="toggleMenu()" style="font-size: 26px; font-weight: bold; cursor: pointer; color: #006699;">✕</div>
+      <div onclick="toggleMenu()" style="font-size: 26px; font-weight: bold; cursor: pointer; color: #00ffc3;">✕</div>
     </div>
     <a href="Buyer.html">Dashboard</a>
     <a href="profile.html">Profile</a>
-    <a href="services.html">Buy Services</a>
-
-  </div>
-
-  <h1>Buy Airdrop Services</h1>
-
-  <div class="section">
+    <a href="deposit.html">ADD FUNDS</a>
+  </div>  <div class="asset-view" id="mainBalanceDisplay">Your Asset: $0.00</div>
+  <h1>Buy Airdrop Services</h1>  <div class="section">
     <label for="serviceType">Select Service</label>
     <select id="serviceType">
       <option value="Testnet">Testnet Sign-ups - $0.20 each</option>
       <option value="Other">Other Sign-ups - $0.10 each</option>
-    </select>
+    </select><label for="quantity">Quantity</label>
+<input type="number" id="quantity" min="1" value="1" />
 
-    <label for="quantity">Quantity</label>
-    <input type="number" id="quantity" min="1" value="1" />
+<label for="link">Airdrop Link</label>
+<input type="url" id="link" placeholder="Paste your airdrop link here" required />
 
-    <label for="link">Airdrop Link</label>
-    <input type="url" id="link" placeholder="Paste your airdrop link here" required />
+<button onclick="submitOrder()">Submit Order</button>
+<div id="errorMsg" class="error"></div>
 
-    <button onclick="submitOrder()">Submit Order</button>
-    <div id="errorMsg" class="error"></div>
-  </div>
-
-  <script>
+  </div>  <script>
     const firebaseConfig = {
       apiKey: "AIzaSyCbqW6QePM7rw4qprDnqWYsVBJ6V7Mym0E",
       authDomain: "junkidrop.firebaseapp.com",
@@ -187,8 +196,9 @@
         db.collection("Buyers").doc(userId).onSnapshot(doc => {
           const data = doc.data();
           currentBalance = data?.balance || 0;
-          document.getElementById("balanceAmount").textContent = `$${currentBalance.toFixed(2)}`;
-          document.getElementById("balanceDisplay").textContent = `Your Asset: $${currentBalance.toFixed(2)}`;
+          const balanceText = `Your Asset: $${currentBalance.toFixed(2)}`;
+          document.getElementById("balanceDisplay").textContent = balanceText;
+          document.getElementById("mainBalanceDisplay").textContent = balanceText;
         });
       }
     });
@@ -254,7 +264,5 @@
         errorEl.textContent = err.message || "Error placing order.";
       });
     }
-  </script>
-
-</body>
+  </script></body>
 </html>
