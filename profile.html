@@ -2,59 +2,35 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Profile - JunkDrop</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;900&display=swap" rel="stylesheet" />
   <style>
     * { box-sizing: border-box; }
     body {
       margin: 0;
       font-family: 'Poppins', sans-serif;
-      transition: background 0.3s ease, color 0.3s ease;
+      background: linear-gradient(135deg, #0a0f1c, #1b2232);
+      color: #ffffff;
       min-height: 100vh;
     }
 
-    body.light {
-      background: linear-gradient(135deg, #d6f5ff, #e6f2ff);
-      color: #333;
-    }
-    body.dark {
-      background: #121212;
-      color: #f1f1f1;
-    }
-    body.dark .profile-box,
-    body.dark .header,
-    body.dark #mobileNav {
-      background: #1e1e1e;
-      color: #f1f1f1;
-    }
-    body.dark .nav-links a,
-    body.dark #mobileNav a,
-    body.dark .logo-text,
-    body.dark .close-btn,
-    body.dark #balanceDisplay {
-      color: #a8e6ff;
-    }
-    body.dark .profile-box button,
-    body.dark button {
-      background: #005577;
-    }
-    body.dark input {
-      background: #2a2a2a;
-      color: #fff;
-      border: 1px solid #555;
+    .header,
+    .profile-box,
+    #mobileNav {
+      background: rgba(255, 255, 255, 0.05);
+      backdrop-filter: blur(14px);
+      border-radius: 16px;
+      color: #ffffff;
     }
 
     .header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      background: #fff;
       padding: 15px 25px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-      position: sticky;
-      top: 0;
-      z-index: 10;
+      margin: 20px;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.5);
     }
 
     .logo {
@@ -67,22 +43,22 @@
     .logo-text {
       font-weight: 900;
       font-size: 24px;
-      color: #006699;
+      color: #00ffc3;
     }
 
     .nav-links {
       display: flex;
-      gap: 25px;
+      gap: 20px;
     }
 
     .nav-links a {
       text-decoration: none;
-      color: #006699;
+      color: #00ffc3;
       font-weight: 600;
       font-size: 16px;
     }
 
-    .nav-links a:hover { color: #003344; }
+    .nav-links a:hover { color: #00bfa5; }
 
     .menu {
       font-size: 28px;
@@ -94,14 +70,11 @@
       cursor: pointer;
       padding: 6px 12px;
       font-size: 14px;
-      background: #eee;
+      background: #00ffc3;
+      color: #000;
       border-radius: 6px;
-      margin-left: 15px;
+      margin-left: 10px;
       font-weight: 600;
-    }
-    body.dark .theme-toggle {
-      background: #333;
-      color: #fff;
     }
 
     #mobileNav {
@@ -110,10 +83,6 @@
       right: -60%;
       width: 60%;
       height: 100%;
-      background: #ffffff;
-      box-shadow: -2px 0 12px rgba(0, 0, 0, 0.15);
-      display: flex;
-      flex-direction: column;
       padding: 25px;
       transition: right 0.3s ease;
       z-index: 999;
@@ -121,26 +90,29 @@
 
     #mobileNav.open { right: 0; }
 
-    #mobileNav a {
-      text-decoration: none;
-      color: #006699;
-      font-weight: 600;
-      margin: 18px 0;
-      font-size: 18px;
-    }
+   #mobileNav a {
+  display: block;
+  text-decoration: none;
+  color: #00ffc3;
+  font-weight: 600;
+  margin: 20px 0;
+  font-size: 18px;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
 
     #balanceDisplay {
       margin: 20px 0 10px;
       font-size: 18px;
       font-weight: 700;
-      color: #009933;
+      color: #00ffc3;
     }
 
     .close-btn {
       font-size: 26px;
       font-weight: bold;
       cursor: pointer;
-      color: #006699;
+      color: #00ffc3;
       margin-left: auto;
     }
 
@@ -150,18 +122,16 @@
     }
 
     h1 {
-      color: #006699;
+      color: #00ffc3;
       font-size: 2.2rem;
       margin-bottom: 25px;
     }
 
     .profile-box {
-      background: #fff;
-      border-radius: 14px;
       padding: 30px 20px;
       max-width: 450px;
       margin: 0 auto;
-      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.3);
       text-align: left;
     }
 
@@ -171,7 +141,7 @@
 
     .profile-section label {
       font-weight: 600;
-      color: #004466;
+      color: #00ffc3;
       display: block;
       margin-bottom: 10px;
     }
@@ -179,32 +149,35 @@
     .profile-section span {
       font-size: 17px;
       font-weight: 500;
-      color: #222;
+      color: #ffffff;
     }
 
     input[type="text"] {
       width: 100%;
       padding: 12px;
       border-radius: 8px;
-      border: 1px solid #ccc;
+      border: 1px solid rgba(255,255,255,0.3);
+      background-color: rgba(255,255,255,0.08);
       font-size: 16px;
+      color: #ffffff;
       margin-bottom: 15px;
     }
 
     button {
-      background: #006699;
-      color: #fff;
+      background: #00ffc3;
+      color: #000;
       border: none;
       padding: 12px 20px;
-      border-radius: 8px;
+      border-radius: 10px;
       font-size: 16px;
       font-weight: 600;
       cursor: pointer;
       width: 100%;
+      transition: background 0.3s ease;
     }
 
     button:hover {
-      background: #004466;
+      background: #00bfa5;
     }
 
     @media (max-width: 768px) {
@@ -243,7 +216,7 @@
     <a href="order-history.html">History</a>
   </div>
   <div style="display: flex; align-items: center; gap: 10px;">
-    <div class="theme-toggle" onclick="toggleTheme()">🌓 Mode</div>
+    
     <div class="menu" onclick="toggleMenu()">☰</div>
   </div>
 </div>
@@ -257,7 +230,6 @@
   <a href="Buyer.html">Dashboard</a>
   <a href="deposit.html">Add Funds</a>
   <a href="services.html">Buy Services</a>
-  
   <a href="#" onclick="logout()">🚪 Logout</a>
 </div>
 
@@ -300,7 +272,6 @@
   firebase.initializeApp(firebaseConfig);
   const auth = firebase.auth();
   const db = firebase.firestore();
-
   let buyerRef = null;
 
   auth.onAuthStateChanged(user => {
@@ -343,7 +314,7 @@
 
   function logout() {
     auth.signOut().then(() => {
-      window.location.href = "index.html";
+      window.location.href = "Loginindex.html";
     });
   }
 
@@ -356,7 +327,7 @@
   }
 
   (function applySavedTheme() {
-    const saved = localStorage.getItem('theme') || 'light';
+    const saved = localStorage.getItem('theme') || 'dark';
     document.body.classList.add(saved);
   })();
 </script>
