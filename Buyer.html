@@ -1,255 +1,238 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html><html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Dashboard - JunkDrop</title>
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;900&display=swap" rel="stylesheet" />
   <style>
     * {
       box-sizing: border-box;
-    }
+    }body {
+  margin: 0;
+  font-family: 'Poppins', sans-serif;
+  background: linear-gradient(135deg, #0a0f1c, #1b2232);
+  color: #ffffff;
+  min-height: 100vh;
+  background-attachment: fixed;
+}
 
-    body {
-      margin: 0;
-      font-family: 'Poppins', sans-serif;
-      background: linear-gradient(135deg, #d6f5ff, #e6f2ff);
-      color: #333;
-      min-height: 100vh;
-    }
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  backdrop-filter: blur(20px);
+  background: rgba(255, 255, 255, 0.05);
+  padding: 15px 25px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
 
-    .header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      background: #ffffff;
-      padding: 15px 25px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-      position: sticky;
-      top: 0;
-      z-index: 10;
-    }
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
 
-    .logo {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
+.logo svg {
+  height: 50px;
+}
 
-    .logo svg {
-      height: 50px;
-    }
+.logo-text {
+  font-weight: 900;
+  font-size: 24px;
+  color: #00ffc3;
+}
 
-    .logo-text {
-      font-weight: 900;
-      font-size: 24px;
-      color: #006699;
-    }
+.menu {
+  font-size: 28px;
+  cursor: pointer;
+  display: none;
+}
 
-    .menu {
-      font-size: 28px;
-      cursor: pointer;
-      display: none;
-    }
+.nav-links {
+  display: flex;
+  gap: 25px;
+}
 
-    .nav-links {
-      display: flex;
-      gap: 25px;
-    }
+.nav-links a {
+  text-decoration: none;
+  color: #00ffc3;
+  font-weight: 600;
+  font-size: 16px;
+  transition: color 0.2s ease;
+}
 
-    .nav-links a {
-      text-decoration: none;
-      color: #006699;
-      font-weight: 600;
-      font-size: 16px;
-      transition: color 0.2s ease;
-    }
+.nav-links a:hover {
+  color: #00bfa5;
+}
 
-    .nav-links a:hover {
-      color: #003344;
-    }
+#mobileNav {
+  position: fixed;
+  top: 0;
+  right: -60%;
+  width: 60%;
+  height: 100%;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(10px);
+  box-shadow: -2px 0 12px rgba(0, 0, 0, 0.3);
+  display: flex;
+  flex-direction: column;
+  padding: 25px;
+  transition: right 0.3s ease;
+  z-index: 999;
+}
 
-    #mobileNav {
-      position: fixed;
-      top: 0;
-      right: -60%;
-      width: 60%;
-      height: 100%;
-      background: #ffffff;
-      box-shadow: -2px 0 12px rgba(0, 0, 0, 0.15);
-      display: flex;
-      flex-direction: column;
-      padding: 25px;
-      transition: right 0.3s ease;
-      z-index: 999;
-    }
+#mobileNav.open {
+  right: 0;
+}
 
-    #mobileNav.open {
-      right: 0;
-    }
+#mobileNav a {
+  display: block;
+  text-decoration: none;
+  color: #00ffc3;
+  font-weight: 600;
+  margin: 20px 0;
+  font-size: 18px;
+  padding: 10px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
 
-    #mobileNav a {
-      text-decoration: none;
-      color: #006699;
-      font-weight: 600;
-      margin: 18px 0;
-      font-size: 18px;
-    }
+#balanceDisplay {
+  margin: 20px 0 10px;
+  font-size: 18px;
+  font-weight: 700;
+  color: #00ffc3;
+}
 
-    #balanceDisplay {
-      margin: 20px 0 10px;
-      font-size: 18px;
-      font-weight: 700;
-      color: #009933;
-    }
+.main {
+  padding: 50px 25px;
+  text-align: center;
+}
 
-    .main {
-      padding: 50px 25px;
-      text-align: center;
-    }
+.main h1 {
+  font-size: 2.8rem;
+  font-weight: 900;
+  color: #00ffc3;
+  margin-bottom: 10px;
+}
 
-    .main h1 {
-      font-size: 2.5rem;
-      font-weight: 900;
-      color: #006699;
-      margin-bottom: 10px;
-    }
+.main .tagline {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: #cfd8dc;
+  margin-bottom: 30px;
+}
 
-    .main .tagline {
-      font-size: 1.2rem;
-      font-weight: 600;
-      color: #004466dd;
-      margin-bottom: 30px;
-    }
+.main .desc {
+  max-width: 600px;
+  margin: 0 auto 40px auto;
+  font-size: 16px;
+  line-height: 1.7;
+  color: #ddd;
+}
 
-    .main .desc {
-      max-width: 600px;
-      margin: 0 auto 40px auto;
-      font-size: 16px;
-      line-height: 1.7;
-      color: #444;
-    }
+.support-box {
+  background: #ffffff0d;
+  border-radius: 16px;
+  box-shadow: 0 6px 18px rgba(0,0,0,0.2);
+  padding: 30px;
+  max-width: 500px;
+  margin: 0 auto;
+  text-align: left;
+}
 
-    .support-box {
-      background: #fff;
-      border-radius: 16px;
-      box-shadow: 0 6px 18px rgba(0,0,0,0.08);
-      padding: 30px;
-      max-width: 500px;
-      margin: 0 auto;
-      text-align: left;
-    }
+.support-box h2 {
+  font-size: 22px;
+  font-weight: 700;
+  color: #00ffc3;
+  margin-bottom: 15px;
+}
 
-    .support-box h2 {
-      font-size: 22px;
-      font-weight: 700;
-      color: #006699;
-      margin-bottom: 15px;
-    }
+.support-box p {
+  font-size: 15px;
+  line-height: 1.6;
+  margin-bottom: 10px;
+}
 
-    .support-box p {
-      font-size: 15px;
-      line-height: 1.6;
-      margin-bottom: 10px;
-    }
+.support-box a {
+  display: inline-block;
+  margin-top: 15px;
+  background: #00ffc3;
+  color: #000;
+  padding: 12px 22px;
+  border-radius: 10px;
+  font-weight: 600;
+  text-decoration: none;
+  transition: background 0.3s ease;
+}
 
-    .support-box a {
-      display: inline-block;
-      margin-top: 15px;
-      background: #006699;
-      color: white;
-      padding: 12px 22px;
-      border-radius: 10px;
-      font-weight: 600;
-      text-decoration: none;
-      transition: background 0.3s ease;
-    }
+.support-box a:hover {
+  background: #00bfa5;
+}
 
-    .support-box a:hover {
-      background: #004466;
-    }
+@media (max-width: 768px) {
+  .nav-links {
+    display: none;
+  }
 
-    @media (max-width: 768px) {
-      .nav-links {
-        display: none;
-      }
+  .menu {
+    display: block;
+  }
 
-      .menu {
-        display: block;
-      }
+  .main h1 {
+    font-size: 2rem;
+  }
+}
 
-      .main h1 {
-        font-size: 2rem;
-      }
-    }
   </style>
 </head>
 <body>
-
-<!-- Firebase SDKs -->
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
-
-<!-- Header -->
-<div class="header">
+<script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script><div class="header">
   <div class="logo">
-    <svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" aria-label="JunkDrop Logo" role="img">
+    <svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" aria-label="JunkDrop Logo">
       <defs>
         <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" stop-color="#a8e6ff" />
-          <stop offset="100%" stop-color="#fff9f4" />
+          <stop offset="0%" stop-color="#00ffc3" />
+          <stop offset="100%" stop-color="#ffffff" />
         </linearGradient>
       </defs>
-      <rect width="120" height="120" fill="#000000" rx="20" ry="20" />
+      <rect width="120" height="120" fill="#000" rx="20" ry="20" />
       <text x="20" y="85" font-family="Poppins, sans-serif" font-size="70" font-weight="900" fill="url(#grad1)">JK</text>
-      <line x1="70" y1="20" x2="90" y2="100" stroke="#a8e6ff" stroke-width="6" stroke-linecap="round" />
+      <line x1="70" y1="20" x2="90" y2="100" stroke="#00ffc3" stroke-width="6" stroke-linecap="round" />
     </svg>
     <span class="logo-text">JunkDrop</span>
-  </div>
-
-  <div class="nav-links">
+  </div>  <div class="nav-links">
     <a href="profile.html">Profile</a>
     <a href="deposit.html">Add Funds</a>
     <a href="services.html">Buy Services</a>
-
-  </div>
-
-  <div class="menu" onclick="toggleMenu()">☰</div>
-</div>
-
-<!-- Mobile Menu -->
-<!-- Mobile Menu -->
-<div id="mobileNav">
+  </div>  <div class="menu" onclick="toggleMenu()">☰</div>
+</div><div id="mobileNav">
   <div style="display: flex; justify-content: space-between; align-items: center;">
     <div id="balanceDisplay">Your Asset: $0.00</div>
-    <div onclick="toggleMenu()" style="font-size: 26px; font-weight: bold; cursor: pointer; color: #006699;">✕</div>
+    <div onclick="toggleMenu()" style="font-size: 26px; font-weight: bold; cursor: pointer; color: #00ffc3;">✕</div>
   </div>
   <a href="profile.html">Profile</a>
   <a href="deposit.html">Add Funds</a>
   <a href="services.html">Buy Services</a>
   
-</div>
-</div>
-
-<!-- Main -->
-<div class="main">
+</div><div class="main">
   <h1>JUNKDROP</h1>
   <p id="usernameDisplay" class="tagline">What are you clicking today...</p>
   <p class="desc">
     JunkDrop helps Web3 projects grow and users earn — by connecting campaigns with reliable, human-powered referrals.  
     No bots. Just clean, scalable reach.
-  </p>
-
-  <div class="support-box">
+  </p>  <div class="support-box">
     <h2>Customer Support</h2>
     <p>Email us for deposit issues, testnet orders, wallet errors, or account help.</p>
     <p>We respond in under 24 hours.</p>
     <a href="mailto:web3.junkid@gmail.com?subject=JunkDrop%20Support%20Request">📧 Email Support</a>
   </div>
-</div>
-
-<script>
+</div><script>
   const firebaseConfig = {
     apiKey: "AIzaSyCbqW6QePM7rw4qprDnqWYsVBJ6V7Mym0E",
     authDomain: "junkidrop.firebaseapp.com",
@@ -280,7 +263,5 @@
   function toggleMenu() {
     document.getElementById('mobileNav').classList.toggle('open');
   }
-</script>
-
-</body>
+</script></body>
 </html>
