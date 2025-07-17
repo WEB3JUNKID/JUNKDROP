@@ -1,128 +1,49 @@
-<!DOCTYPE html>
-<html lang="en">
+<!DOCTYPE html><html lang="en">
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>JunkDrop - Web3 Airdrop Platform</title>
-
+<title>JunkDrop - Web3 Airdrop Platform</title><link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;900&display=swap" rel="stylesheet" />
 <style>
-  /* Reset */
   * {
     box-sizing: border-box;
-  }
+  }body { margin: 0; background: linear-gradient(135deg, #0a0f1c, #1b2232); font-family: 'Poppins', Arial, sans-serif; color: #ffffff; display: flex; flex-direction: column; align-items: center; min-height: 100vh; padding: 40px 20px; background-attachment: fixed; }
 
-  body {
-    margin: 0; 
-    background: linear-gradient(135deg, #d6f5ff, #e6f2ff);
-    font-family: 'Poppins', Arial, sans-serif;
-    color: #333;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    min-height: 100vh;
-    padding: 40px 20px;
-  }
+.logo { width: 120px; height: 120px; margin-bottom: 20px; }
 
-  .logo {
-    width: 120px;
-    height: 120px;
-    margin-bottom: 20px;
-  }
+h1 { font-weight: 900; font-size: 2.8rem; margin: 0 0 8px 0; color: #00ffc3; text-align: center; }
 
-  h1 {
-    font-weight: 900;
-    font-size: 2.5rem;
-    margin: 0 0 8px 0;
-    color: #006699;
-  }
+p.subtitle { font-size: 1.1rem; color: #cfd8dc; margin: 0 0 40px 0; text-align: center; }
 
-  p.subtitle {
-    font-size: 1.1rem;
-    color: #004466cc;
-    margin: 0 0 40px 0;
-  }
+.btn-grid { display: grid; grid-template-columns: repeat(auto-fit,minmax(220px,1fr)); gap: 20px; width: 100%; max-width: 600px; }
 
-  .btn-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit,minmax(220px,1fr));
-    gap: 20px;
-    width: 100%;
-    max-width: 600px;
-  }
+button { background: #00ffc3; border: none; border-radius: 12px; padding: 18px 24px; color: #000; font-size: 1.1rem; font-weight: 700; cursor: pointer; transition: background 0.3s ease; box-shadow: 0 5px 12px rgba(0, 255, 195, 0.3); } button:hover { background: #00bfa5; }
 
-  button {
-    background: #006699;
-    border: none;
-    border-radius: 12px;
-    padding: 18px 24px;
-    color: white;
-    font-size: 1.1rem;
-    font-weight: 700;
-    cursor: pointer;
-    transition: background 0.3s ease;
-    box-shadow: 0 5px 12px rgba(0,102,153,0.3);
-  }
-  button:hover {
-    background: #004466;
-  }
+.buyer-btn { background: #00e676; color: #000; box-shadow: 0 5px 12px rgba(0,230,118,0.3); } .buyer-btn:hover { background: #00c853; }
 
-  .buyer-btn {
-    background: #009933;
-    box-shadow: 0 5px 12px rgba(0,153,51,0.3);
-  }
-  .buyer-btn:hover {
-    background: #006622;
-  }
+.seller-btn { background: #ff9100; color: #000; box-shadow: 0 5px 12px rgba(255,145,0,0.3); } .seller-btn:hover { background: #ff6d00; }
 
-  .seller-btn {
-    background: #cc6600;
-    box-shadow: 0 5px 12px rgba(204,102,0,0.3);
-  }
-  .seller-btn:hover {
-    background: #994d00;
-  }
+@media(max-width:400px) { h1 { font-size: 2rem; } button { font-size: 1rem; padding: 14px 20px; } } </style>
 
-  @media(max-width:400px) {
-    h1 {
-      font-size: 2rem;
-    }
-    button {
-      font-size: 1rem;
-      padding: 14px 20px;
-    }
-  }
-</style>
 </head>
-<body>
-
-<!-- Logo SVG -->
-<svg class="logo" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" aria-label="JunkDrop Logo" role="img">
+<body><!-- Logo SVG --><svg class="logo" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" aria-label="JunkDrop Logo" role="img">
   <defs>
     <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#a8e6ff" />
-      <stop offset="100%" stop-color="#fff9f4" />
+      <stop offset="0%" stop-color="#00ffc3" />
+      <stop offset="100%" stop-color="#ffffff" />
     </linearGradient>
   </defs>
   <rect width="120" height="120" fill="#000000" rx="20" ry="20" />
   <text x="20" y="85" font-family="Poppins, sans-serif" font-size="70" font-weight="900" fill="url(#grad1)">JK</text>
-  <line x1="70" y1="20" x2="90" y2="100" stroke="#a8e6ff" stroke-width="6" stroke-linecap="round" />
-</svg>
-
-<h1>Welcome to JunkDrop</h1>
-<p class="subtitle">Buy Web3 referral services or apply to be a seller.</p>
-
-<div class="btn-grid">
+  <line x1="70" y1="20" x2="90" y2="100" stroke="#00ffc3" stroke-width="6" stroke-linecap="round" />
+</svg><h1>Welcome to JunkDrop</h1>
+<p class="subtitle">Buy Web3 referral services or apply to be a seller.</p><div class="btn-grid">
   <button class="buyer-btn" onclick="goTo('buyer-signup.html')">Buyer Sign Up</button>
   <button class="buyer-btn" onclick="goTo('buyer-login.html')">Buyer Login</button>
   <button class="seller-btn" onclick="goTo('seller-signup.html')">Seller Sign Up</button>
   <button class="seller-btn" onclick="goTo('seller-login.html')">Seller Login</button>
-</div>
-
-<script>
+</div><script>
   function goTo(page) {
     window.location.href = page;
   }
-</script>
-
-</body>
+</script></body>
 </html>
