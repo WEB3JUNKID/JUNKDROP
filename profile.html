@@ -213,7 +213,7 @@
     <a href="Buyer.html">Dashboard</a>
     <a href="deposit.html">Add Funds</a>
     <a href="services.html">Buy Services</a>
-    <a href="order-history.html">History</a>
+    
   </div>
   <div style="display: flex; align-items: center; gap: 10px;">
     
@@ -276,7 +276,7 @@
 
   auth.onAuthStateChanged(user => {
     if (!user) {
-      window.location.href = "Loginindex.html";
+      window.location.href = "index.html";
       return;
     }
 
@@ -314,7 +314,7 @@
 
   function logout() {
     auth.signOut().then(() => {
-      window.location.href = "Loginindex.html";
+      window.location.href = "index.html";
     });
   }
 
