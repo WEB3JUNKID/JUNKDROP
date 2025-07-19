@@ -172,97 +172,100 @@ button:hover {
 <div id="errorMsg" class="error"></div>
 
   </div>  <script>
-    const firebaseConfig = {
-      apiKey: "AIzaSyCbqW6QePM7rw4qprDnqWYsVBJ6V7Mym0E",
-      authDomain: "junkidrop.firebaseapp.com",
-      projectId: "junkidrop",
-      storageBucket: "junkidrop.appspot.com",
-      messagingSenderId: "1093337835515",
-      appId: "1:1093337835515:web:99f507ebaef6ef70080d5e"
-    };
+  const firebaseConfig = {
+    apiKey: "AIzaSyCbqW6QePM7rw4qprDnqWYsVBJ6V7Mym0E",
+    authDomain: "junkidrop.firebaseapp.com",
+    projectId: "junkidrop",
+    storageBucket: "junkidrop.appspot.com",
+    messagingSenderId: "1093337835515",
+    appId: "1:1093337835515:web:99f507ebaef6ef70080d5e"
+  };
+  firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
+  const db = firebase.firestore();
 
-    firebase.initializeApp(firebaseConfig);
-    const auth = firebase.auth();
-    const db = firebase.firestore();
+  let userId;
+  let currentBalance = 0;
 
-    let userId;
-    let currentBalance = 0;
-
-    auth.onAuthStateChanged(user => {
-      if (!user) {
-        window.location.href = "index.html";
-      } else {
-        userId = user.uid;
-        db.collection("Buyers").doc(userId).onSnapshot(doc => {
-          const data = doc.data();
-          currentBalance = data?.balance || 0;
-          const balanceText = `Your Asset: $${currentBalance.toFixed(2)}`;
-          document.getElementById("balanceDisplay").textContent = balanceText;
-          document.getElementById("mainBalanceDisplay").textContent = balanceText;
-        });
-      }
-    });
-
-    function toggleMenu() {
-      document.getElementById("mobileNav").classList.toggle("open");
-    }
-
-    function submitOrder() {
-      const qty = parseInt(document.getElementById("quantity").value);
-      const type = document.getElementById("serviceType").value;
-      const link = document.getElementById("link").value.trim();
-      const errorEl = document.getElementById("errorMsg");
-      errorEl.textContent = "";
-
-      if (!qty || qty < 1) {
-        errorEl.textContent = "Please enter a valid quantity.";
-        return;
-      }
-      if (!link) {
-        errorEl.textContent = "Airdrop link is required.";
-        return;
-      }
-
-      const unitPrice = type === "Testnet" ? 0.20 : 0.10;
-      const total = qty * unitPrice;
-
-      if (currentBalance < total) {
-        errorEl.textContent = "Insufficient balance. Please deposit more funds.";
-        return;
-      }
-
-      const orderData = {
-        userId,
-        quantity: qty,
-        totalPrice: total.toFixed(2),
-        type,
-        link,
-        status: "pending",
-        timestamp: firebase.firestore.FieldValue.serverTimestamp()
-      };
-
-      const buyerRef = db.collection("Buyers").doc(userId);
-      const orderRef = db.collection("Buyorder").doc();
-
-      db.runTransaction(async (transaction) => {
-        const buyerDoc = await transaction.get(buyerRef);
-        const balance = buyerDoc.data()?.balance || 0;
-
-        if (balance < total) {
-          throw new Error("Insufficient balance.");
-        }
-
-        transaction.update(buyerRef, { balance: balance - total });
-        transaction.set(orderRef, orderData);
-      })
-      .then(() => {
-        alert(`Order placed for ${qty} ${type} sign-ups.\n$${total.toFixed(2)} has been deducted.`);
-        document.getElementById("quantity").value = 1;
-        document.getElementById("link").value = "";
-      })
-      .catch(err => {
-        errorEl.textContent = err.message || "Error placing order.";
+  auth.onAuthStateChanged(user => {
+    if (!user) {
+      window.location.href = "index.html";
+    } else {
+      userId = user.uid;
+      db.collection("Buyers").doc(userId).onSnapshot(doc => {
+        const data = doc.data();
+        currentBalance = data?.balance || 0;
+        const balanceText = `Your Asset: $${currentBalance.toFixed(2)}`;
+        document.getElementById("balanceDisplay").textContent = balanceText;
+        document.getElementById("mainBalanceDisplay").textContent = balanceText;
       });
     }
-  </script></body>
+  });
+
+  function toggleMenu() {
+    document.getElementById("mobileNav").classList.toggle("open");
+  }
+
+  function submitOrder() {
+    const qty = parseInt(document.getElementById("quantity").value);
+    const type = document.getElementById("serviceType").value;
+    const link = document.getElementById("link").value.trim();
+    const errorEl = document.getElementById("errorMsg");
+    errorEl.textContent = "";
+
+    if (!qty || qty < 1) {
+      errorEl.textContent = "Please enter a valid quantity.";
+      return;
+    }
+    if (!link) {
+      errorEl.textContent = "Airdrop link is required.";
+      return;
+    }
+
+    const pricePerunit = type === "Testnet" ? 0.20 : 0.10;
+    const totalPrice = qty * pricePerunit;
+    const orderType = pricePerunit === 0.20 ? "Testnet" : "Other Signups";
+
+    if (currentBalance < totalPrice) {
+      errorEl.textContent = "Insufficient balance. Please deposit more funds.";
+      return;
+    }
+
+    const orderData = {
+      userId,
+      quantity: qty,
+      quantityRemaining: qty,
+      pricePerunit,
+      totalPrice: totalPrice.toFixed(2),
+      orderType,
+      link,
+      status: "pending",
+      isApproved: false,
+      timestamp: firebase.firestore.FieldValue.serverTimestamp()
+    };
+
+    const buyerRef = db.collection("Buyers").doc(userId);
+    const orderRef = db.collection("Buyorder").doc();
+
+    db.runTransaction(async (transaction) => {
+      const buyerDoc = await transaction.get(buyerRef);
+      const balance = buyerDoc.data()?.balance || 0;
+
+      if (balance < totalPrice) {
+        throw new Error("Insufficient balance.");
+      }
+
+      transaction.update(buyerRef, { balance: balance - totalPrice });
+      transaction.set(orderRef, orderData);
+    })
+    .then(() => {
+      alert(`Order placed for ${qty} ${orderType} sign-ups.\n$${totalPrice.toFixed(2)} has been deducted.`);
+      document.getElementById("quantity").value = 1;
+      document.getElementById("link").value = "";
+    })
+    .catch(err => {
+      errorEl.textContent = err.message || "Error placing order.";
+    });
+  }
+</script></body>
 </html>
