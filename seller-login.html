@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Seller Login - JunkDrop</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet" />
+  <style>
+    body {
+      background: linear-gradient(135deg, #0a0f1c, #1b2232);
+      font-family: 'Poppins', sans-serif;
+      color: #ffffff;
+      height: 100vh;
+      margin: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 15px;
+    }
+    .auth-box {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 20px;
+      padding: 30px 40px;
+      width: 380px;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
+      text-align: center;
+      backdrop-filter: blur(12px);
+    }
+    h1 {
+      margin-bottom: 25px;
+      font-weight: 700;
+      font-size: 2rem;
+      color: #00ffc3;
+    }
+    input {
+      width: 100%;
+      padding: 12px;
+      margin: 10px 0;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      font-size: 16px;
+      background-color: rgba(255,255,255,0.08);
+      color: #ffffff;
+      outline: none;
+    }
+    input::placeholder {
+      color: #bbb;
+    }
+    button {
+      background: #00ffc3;
+      color: #000000;
+      padding: 14px 0;
+      width: 100%;
+      border: none;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 16px;
+      cursor: pointer;
+      margin-top: 10px;
+      transition: background 0.3s ease;
+    }
+    button:hover {
+      background: #00bfa5;
+    }
+    .message {
+      margin-top: 12px;
+      font-weight: 600;
+      min-height: 20px;
+      color: #ff5252;
+    }
+    .link {
+      margin-top: 15px;
+    }
+    .link a {
+      color: #00ffc3;
+      text-decoration: none;
+      font-weight: 600;
+    }
+    .link a:hover {
+      text-decoration: underline;
+    }
+  </style>
+
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+</head>
+<body>
+  <div class="auth-box">
+    <h1>Seller Login</h1>
+    <input type="email" id="email" placeholder="Email" />
+    <input type="password" id="password" placeholder="Password" />
+    <button onclick="loginSeller()">Login</button>
+    <p class="message" id="errorMsg"></p>
+    <p class="link">Not approved yet? <a href="seller-signup.html">Apply Here</a></p>
+  </div>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyCbqW6QePM7rw4qprDnqWYsVBJ6V7Mym0E",
+      authDomain: "junkidrop.firebaseapp.com",
+      projectId: "junkidrop"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+
+    function loginSeller() {
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value.trim();
+      const errorBox = document.getElementById('errorMsg');
+      errorBox.textContent = "";
+
+      auth.signInWithEmailAndPassword(email, password)
+        .then(cred => {
+          const uid = cred.user.uid;
+          return db.collection("sellerApplication").doc(uid).get();
+        })
+        .then(doc => {
+          if (doc.exists && doc.data().status === "approved") {
+            window.location.href = "seller.html";
+          } else {
+            auth.signOut();
+            errorBox.textContent = "Access denied. Seller not approved.";
+          }
+        })
+        .catch(err => {
+          errorBox.textContent = err.message;
+        });
+    }
+  </script>
+</body>
+</html>

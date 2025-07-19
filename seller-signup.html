@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  
+  <title>Seller Signup - JunkDrop</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet" />
+  <style>
+    body {
+      background: linear-gradient(135deg, #0a0f1c, #1b2232);
+      font-family: 'Poppins', sans-serif;
+      color: #ffffff;
+      min-height: 100vh;
+      margin: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 15px;
+    }
+    .auth-box {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 20px;
+      padding: 30px 40px;
+      width: 420px;
+      box-shadow: 0 8px 25px rgba(0, 0, 0, 0.5);
+      text-align: center;
+      backdrop-filter: blur(12px);
+    }
+    h2 {
+      margin-bottom: 25px;
+      font-weight: 700;
+      font-size: 1.8rem;
+      color: #00ffc3;
+    }
+    label {
+      display: block;
+      text-align: left;
+      margin-top: 15px;
+      margin-bottom: 6px;
+      font-weight: 600;
+      font-size: 14px;
+      color: #e0e0e0;
+    }
+    input, select, textarea {
+      width: 100%;
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      background-color: rgba(255, 255, 255, 0.08);
+      color: #ffffff;
+      font-size: 15px;
+      outline: none;
+      box-sizing: border-box;
+      margin-bottom: 10px;
+    }
+    input::placeholder, textarea::placeholder {
+      color: #bbb;
+    }
+    select {
+      appearance: none;
+      background-image: url('data:image/svg+xml;utf8,<svg fill="white" height="18" viewBox="0 0 24 24" width="18" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/></svg>');
+      background-repeat: no-repeat;
+      background-position-x: 100%;
+      background-position-y: center;
+    }
+    button {
+      background: #00ffc3;
+      color: #000000;
+      padding: 14px 0;
+      width: 100%;
+      border: none;
+      border-radius: 10px;
+      font-weight: 600;
+      font-size: 16px;
+      cursor: pointer;
+      margin-top: 15px;
+      transition: background 0.3s ease;
+    }
+    button:hover {
+      background: #00bfa5;
+    }
+    .error {
+      margin-top: 15px;
+      font-weight: 600;
+      font-size: 14px;
+      color: #ff5252;
+      min-height: 20px;
+    }
+  </style>
+
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+</head>
+<body>
+
+  <form class="auth-box" onsubmit="event.preventDefault(); signupSeller();">
+    <h2>Seller Application</h2>
+
+    <label for="email">Email</label>
+    <input type="email" id="email" placeholder="Enter your email" required />
+
+    <label for="password">Password</label>
+    <input type="password" id="password" placeholder="Enter a password" required />
+
+    <label for="name">Full Name / Nickname</label>
+    <input type="text" id="name" placeholder="Your display name" required />
+
+    <label for="telegram">Telegram Link</label>
+    <input type="url" id="telegram" placeholder="https://t.me/yourusername" required />
+
+    <label for="hours">Available Hours per Day</label>
+    <input type="number" id="hours" min="1" max="24" placeholder="e.g., 4" required />
+
+    <label for="experience">Testnet Experience (Years)</label>
+    <select id="experience" required>
+      <option value="" disabled selected>Select years of experience</option>
+      <option value="0">0</option>
+      <option value="1">1 year</option>
+      <option value="2">2 years</option>
+      <option value="3">3 years</option>
+      <option value="4">4+ years</option>
+    </select>
+
+    <label for="whyJoin">Why Should We Bring You Onboard?</label>
+    <textarea id="whyJoin" rows="4" placeholder="Tell us why..." required></textarea>
+
+    <button type="submit">Submit Application</button>
+    <div id="errorMsg" class="error"></div>
+  </form>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyCbqW6QePM7rw4qprDnqWYsVBJ6V7Mym0E",
+      authDomain: "junkidrop.firebaseapp.com",
+      projectId: "junkidrop",
+      storageBucket: "junkidrop.appspot.com",
+      messagingSenderId: "1093337835515",
+      appId: "1:1093337835515:web:99f507ebaef6ef70080d5e"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+
+    async function signupSeller() {
+      const email = document.getElementById("email").value.trim();
+      const password = document.getElementById("password").value;
+      const name = document.getElementById("name").value.trim();
+      const telegram = document.getElementById("telegram").value.trim();
+      const hours = parseInt(document.getElementById("hours").value);
+      const experience = parseInt(document.getElementById("experience").value);
+      const whyJoin = document.getElementById("whyJoin").value.trim();
+      const errorEl = document.getElementById("errorMsg");
+
+      errorEl.textContent = "";
+
+      if (!email || !password || !name || !telegram || isNaN(hours) || isNaN(experience) || !whyJoin) {
+        errorEl.textContent = "Please fill in all fields correctly.";
+        return;
+      }
+
+      try {
+        const cred = await auth.createUserWithEmailAndPassword(email, password);
+        const uid = cred.user.uid;
+
+        await db.collection("sellerApplication").doc(uid).set({
+          userId: uid,
+          name: name,
+          telegram: telegram,
+          hours: hours,
+          experience: experience,
+          whyJoin: whyJoin,
+          status: "pending",
+          timestamp: firebase.firestore.FieldValue.serverTimestamp()
+        });
+
+        alert("Application submitted successfully! Please wait for admin approval.");
+        window.location.href = "seller-login.html";
+      } catch (error) {
+        console.error(error);
+        errorEl.textContent = error.message;
+      }
+    }
+  </script>
+
+</body>
+</html>
