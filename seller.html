@@ -1,0 +1,271 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Seller Dashboard - JunkDrop</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;900&display=swap" rel="stylesheet" />
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(135deg, #0a0f1c, #1b2232);
+      color: #ffffff;
+      min-height: 100vh;
+      background-attachment: fixed;
+    }
+
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      backdrop-filter: blur(20px);
+      background: rgba(255, 255, 255, 0.05);
+      padding: 15px 25px;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .logo svg {
+      height: 50px;
+    }
+
+    .logo-text {
+      font-weight: 900;
+      font-size: 24px;
+      color: #00ffc3;
+    }
+
+    .menu {
+      font-size: 28px;
+      cursor: pointer;
+      display: none;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 25px;
+    }
+
+    .nav-links a {
+      text-decoration: none;
+      color: #00ffc3;
+      font-weight: 600;
+      font-size: 16px;
+      transition: color 0.2s ease;
+    }
+
+    .nav-links a:hover {
+      color: #00bfa5;
+    }
+
+    #mobileNav {
+      position: fixed;
+      top: 0;
+      right: -60%;
+      width: 60%;
+      height: 100%;
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      box-shadow: -2px 0 12px rgba(0, 0, 0, 0.3);
+      display: flex;
+      flex-direction: column;
+      padding: 25px;
+      transition: right 0.3s ease;
+      z-index: 999;
+    }
+
+    #mobileNav.open {
+      right: 0;
+    }
+
+    #mobileNav a {
+      text-decoration: none;
+      color: #00ffc3;
+      font-weight: 600;
+      margin: 18px 0;
+      font-size: 18px;
+    }
+
+    .main {
+      padding: 50px 25px;
+      text-align: center;
+    }
+
+    .main h1 {
+      font-size: 2.8rem;
+      font-weight: 900;
+      color: #00ffc3;
+      margin-bottom: 10px;
+    }
+
+    .main .info {
+      font-size: 1.1rem;
+      color: #cfd8dc;
+      margin-bottom: 15px;
+    }
+
+    #sellerName {
+      font-size: 1.6rem;
+      font-weight: 600;
+      margin-top: 20px;
+      color: #00ffc3;
+    }
+
+    #sellerBalance {
+      font-size: 1.2rem;
+      color: #ffffff;
+      margin-bottom: 40px;
+    }
+
+    @media (max-width: 768px) {
+      .nav-links {
+        display: none;
+      }
+
+      .menu {
+        display: block;
+      }
+
+      .main h1 {
+        font-size: 2rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+
+  <!-- Header -->
+  <div class="header">
+    <div class="logo">
+      <svg viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg" aria-label="JunkDrop Logo">
+        <defs>
+          <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" stop-color="#00ffc3" />
+            <stop offset="100%" stop-color="#ffffff" />
+          </linearGradient>
+        </defs>
+        <rect width="120" height="120" fill="#000" rx="20" ry="20" />
+        <text x="20" y="85" font-family="Poppins, sans-serif" font-size="70" font-weight="900" fill="url(#grad1)">JK</text>
+        <line x1="70" y1="20" x2="90" y2="100" stroke="#00ffc3" stroke-width="6" stroke-linecap="round" />
+      </svg>
+      <span class="logo-text">JunkDrop</span>
+    </div>
+
+    <div class="nav-links">
+      <a href="seller-dashboard.html">Dashboard</a>
+      <a href="claim-orders.html">Claim Orders</a>
+      <a href="payout.html">Withdraw</a>
+ <a href="seller-guide.html">Seller's Guide</a>
+    </div>
+
+    <div class="menu" onclick="toggleMenu()">☰</div>
+  </div>
+
+  <!-- Mobile Navigation -->
+  <div id="mobileNav">
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+      <div style="color: #00ffc3; font-weight: bold;">Menu</div>
+      <div onclick="toggleMenu()" style="font-size: 26px; font-weight: bold; cursor: pointer; color: #00ffc3;">✕</div>
+    </div>
+    <a href="my-orders.html">My Orders</a>
+    <a href="claim-orders.html">Claim Orders</a>
+    <a href="payout.html">Withdraw</a>
+     <a href="seller-guide.html">Seller's Guide</a>
+  </div>
+
+  <!-- Main Content -->
+  <div class="main">
+    <h1>Seller Dashboard</h1>
+    <p class="info">Welcome to your Dashboard. </p>
+    <p>Are you Ready to claim those Orders?</p>
+    <p id="sellerName">Loading your name...</p>
+    <p id="sellerBalance">Balance: loading...</p>
+     <div class="support-box">
+    <h2>Customer Support</h2>
+    <p>Email us for claim order fails , error in your claimed orders, withdrawal errors, or account help.</p>
+    <p>We respond in under 24 hours.</p>
+    <a href="mailto:junkdrop.app@gmail.com?subject=JunkDrop%20Support%20Request">📧 Email Support</a>
+  </div>
+  </div>
+
+  <!-- Logic -->
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyCbqW6QePM7rw4qprDnqWYsVBJ6V7Mym0E",
+      authDomain: "junkidrop.firebaseapp.com",
+      projectId: "junkidrop",
+      storageBucket: "junkidrop.appspot.com",
+      messagingSenderId: "1093337835515",
+      appId: "1:1093337835515:web:99f507ebaef6ef70080d5e"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+
+    auth.onAuthStateChanged(async (user) => {
+      if (!user) return;
+
+      const uid = user.uid;
+      const sellerRef = db.collection('Sellers').doc(uid);
+      const appRef = db.collection('sellerApplication').doc(uid);
+
+      try {
+        const sellerSnap = await sellerRef.get();
+
+        if (!sellerSnap.exists) {
+          const appSnap = await appRef.get();
+
+          if (!appSnap.exists || appSnap.data().status !== "approved") {
+            document.getElementById("sellerName").textContent = "Application not approved yet.";
+            document.getElementById("sellerBalance").textContent = "";
+            return;
+          }
+
+          const appData = appSnap.data();
+          const name = appData.name || "Unnamed";
+
+          await sellerRef.set({
+            name,
+            Balance: 0
+          });
+
+          document.getElementById("sellerName").textContent = `Hello, ${name}`;
+          document.getElementById("sellerBalance").textContent = `Balance: $0.00`;
+        } else {
+          const data = sellerSnap.data();
+          document.getElementById("sellerName").textContent = `Hello, ${data.name}`;
+          const balanceNum = Number(data.balance);
+          document.getElementById("sellerBalance").textContent = `Balance: $${(isNaN(balanceNum) ? 0 : balanceNum).toFixed(2)}`;
+        }
+      } catch (err) {
+        console.error("Error:", err);
+        document.getElementById("sellerName").textContent = "Error loading seller info";
+        document.getElementById("sellerBalance").textContent = "";
+      }
+    });
+
+    function toggleMenu() {
+      document.getElementById('mobileNav').classList.toggle('open');
+    }
+  </script>
+</body>
+</html>

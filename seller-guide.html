@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Seller Guide - JunkDrop</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;900&display=swap" rel="stylesheet">
+  <style>
+    body {
+      background: linear-gradient(135deg, #0a0f1c, #1b2232);
+      color: #fff;
+      font-family: 'Poppins', sans-serif;
+      padding: 80px 20px 40px;
+      line-height: 1.8;
+    }
+
+    header {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      background: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(10px);
+      padding: 15px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 1000;
+    }
+
+    .logo {
+      font-size: 22px;
+      font-weight: 900;
+      color: #00ffc3;
+    }
+
+    .menu {
+      font-size: 26px;
+      cursor: pointer;
+      color: #00ffc3;
+    }
+
+    #mobileNav {
+      position: fixed;
+      top: 4.5%; right: -105%; width: 60%; height: 100%;
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      box-shadow: -2px 0 12px rgba(0, 0, 0, 0.3);
+      display: flex; flex-direction: column; padding: 25px;
+      transition: right 0.3s ease; z-index: 999;
+    }
+
+    #mobileNav.open { right: 0; }
+
+    #mobileNav a {
+      display: block;
+      text-decoration: none;
+      color: #00ffc3;
+      font-weight: 600;
+      margin: 20px 0;
+      font-size: 18px;
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    h1 {
+      color: #00ffc3;
+      text-align: center;
+      margin-bottom: 30px;
+    }
+
+    h2 {
+      color: #00ffc3;
+      margin-top: 30px;
+      font-size: 22px;
+    }
+
+    ul {
+      margin-left: 20px;
+    }
+
+    li {
+      margin-bottom: 10px;
+    }
+
+    code {
+      background: rgba(255,255,255,0.1);
+      padding: 2px 6px;
+      border-radius: 6px;
+    }
+
+    a {
+      color: #00ffc3;
+      text-decoration: underline;
+    }
+
+    .container {
+      max-width: 800px;
+      margin: 0 auto;
+      background: rgba(255,255,255,0.05);
+      padding: 30px;
+      border-radius: 20px;
+      border: 1px solid rgba(255,255,255,0.1);
+      box-shadow: 0 0 20px rgba(0,0,0,0.3);
+    }
+
+    strong {
+      color: #00ffc3;
+    }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="logo">JunkDrop</div>
+    <div class="menu" onclick="toggleMenu()">☰</div>
+  </header>
+
+  <div id="mobileNav">
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+      <span style="font-weight: bold; font-size: 20px; color: #00ffc3;">Navigation</span>
+      <div onclick="toggleMenu()" style="font-size: 26px; font-weight: bold; cursor: pointer; color: #00ffc3;">✕</div>
+    </div>
+    <a href="Seller.html">Dashboard</a>
+    <a href="claim-orders.html">Claim Orders</a>
+    <a href="my-orders.html">My Orders</a>
+     <a href="payout.html">Withdraw</a>
+  </div>
+
+  <div class="container">
+    <h1>📘 Seller Guide</h1>
+
+    <h2>🚀 Getting Started</h2>
+    <ul>
+      <li>Create a JunkDrop account and apply as a seller from the dashboard</li>
+      <li>Once approved, you’ll be able to see available buy orders</li>
+    </ul>
+
+    <h2>📦 Claiming Orders</h2>
+    <ul>
+      <li>Visit your Seller Dashboard to view available orders</li>
+      <li>Choose an order you can fulfill and click <strong>“Claim”</strong></li>
+      <li>After pickup, create a dedicated <strong>Google Drive folder</strong> for the order</li>
+      <li>Upload your proof: images, receipts, GPS screenshots, etc.</li>
+      <li>Set the folder sharing to <strong>“Anyone with the link can view”</strong></li>
+      <li>Submit the folder link through the <strong>“Submit Proof”</strong> section</li>
+    </ul>
+
+    <h2>📂 Google Drive Submission Tips</h2>
+    <ul>
+      <li>Name the folder like: <code>Order_ABC123_Proof</code></li>
+      <li>Include clear photos of collected items and your location if needed</li>
+      <li>Upload any before/after shots, screenshots, or evidence of completion</li>
+      <li>Make sure the link works (test in an incognito window)</li>
+    </ul>
+
+    <h2>✅ Proof Review</h2>
+    <ul>
+      <li>The admin will verify your proof manually</li>
+      <li>If everything checks out, your claim will be approved</li>
+      <li>You’ll see your balance increase in your dashboard</li>
+    </ul>
+
+    <h2>💰 Getting Paid</h2>
+    <ul>
+      <li>Go to the <strong>Withdraw</strong> page when you’re ready to cash out</li>
+      <li>Enter your wallet address and the amount you want to withdraw</li>
+      <li>You can only request if your balance covers the amount</li>
+      <li>Once approved by admin, your funds will be sent to your wallet</li>
+    </ul>
+
+    <h2>📊 Balances & Fees</h2>
+    <ul>
+      <li>Your dashboard will show your current available balance</li>
+      <li>Each claim is subject to a small platform fee (if any — see specific orders)</li>
+    </ul>
+
+    <h2>🚨 Seller Responsibilities & Enforcement</h2>
+    <ul>
+      <li><strong>Only claim orders you can complete within 24–48 hours.</strong> Overclaiming will result in a ban.</li>
+      <li><strong>Do not default.</strong> Failure to complete claimed orders leads to account removal and asset confiscation.</li>
+      <li><strong>Proof is mandatory.</strong> Every claimed order must include a verifiable Drive link with clear evidence.</li>
+      <li><strong>False, missing, or misleading proof = permanent suspension.</strong></li>
+      <li><strong>Respect all timelines, users, and processes.</strong></li>
+      <li><strong>Sellers must act with honesty, speed, and full responsibility at all times.</strong></li>
+    </ul>
+
+    <h2>📞 Support</h2>
+    <ul>
+      <li>If you have issues with a claim or payout, contact support via dashboard or email</li>
+      <li>We’re here to help!</li>
+    </ul>
+  </div>
+
+  <script>
+    function toggleMenu() {
+      document.getElementById("mobileNav").classList.toggle("open");
+    }
+  </script>
+
+</body>
+</html>

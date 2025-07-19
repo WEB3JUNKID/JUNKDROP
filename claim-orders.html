@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Claim Orders - JunkDrop Seller</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;900&display=swap" rel="stylesheet">
+  <style>
+    body {
+      font-family: 'Poppins', sans-serif;
+      background: #121212;
+      color: #00ffc3;
+      padding: 20px;
+      margin: 0;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 1rem;
+    }
+
+    .order {
+      background: rgba(0,255,195,0.1);
+      border: 1px solid #00ffc3;
+      padding: 15px;
+      margin-bottom: 15px;
+      border-radius: 8px;
+    }
+
+    .order p {
+      margin: 6px 0;
+    }
+
+    .order input[type=number] {
+      width: 80px;
+      margin-right: 10px;
+      padding: 6px;
+      border-radius: 4px;
+      border: none;
+      font-size: 1rem;
+    }
+
+    .order button {
+      background: #00ffc3;
+      border: none;
+      padding: 8px 14px;
+      color: #000;
+      font-weight: 700;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background-color 0.3s ease;
+    }
+
+    .order button:hover {
+      background: #00bfa5;
+    }
+
+    a {
+      color: #4dabf7;
+    }
+
+    .menu {
+      font-size: 28px;
+      cursor: pointer;
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 1001;
+    }
+
+    #mobileNav {
+      position: fixed;
+      top: 0;
+      right: -100%;
+      width: 60%;
+      height: 100%;
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(10px);
+      box-shadow: -2px 0 12px rgba(0, 0, 0, 0.3);
+      display: flex;
+      flex-direction: column;
+      padding: 25px;
+      transition: right 0.3s ease;
+      z-index: 1000;
+    }
+
+    #mobileNav.open {
+      right: 0;
+    }
+
+    #mobileNav div {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+    }
+
+    #mobileNav a {
+      text-decoration: none;
+      color: #00ffc3;
+      font-weight: 600;
+      margin: 18px 0;
+      font-size: 18px;
+    }
+
+    @media (min-width: 768px) {
+      .menu {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Mobile Menu Icon -->
+  <div class="menu" onclick="toggleMenu()">☰</div>
+
+  <!-- Mobile Navigation -->
+  <div id="mobileNav">
+    <div>
+      <span style="font-weight: bold; color: #00ffc3;">Menu</span>
+      <span onclick="toggleMenu()" style="font-size: 26px; cursor: pointer;">✕</span>
+    </div>
+    <a href="seller.html">Dashboard</a>
+    <a href="my-orders.html">My Orders</a>
+    <a href="payout.html">Withdraw</a>
+ <a href="seller-guide.html">Seller's Guide</a>
+  </div>
+
+  <!-- Page Content -->
+  <h1>Claim Orders</h1>
+  <div id="ordersContainer">Loading orders...</div>
+
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyCbqW6QePM7rw4qprDnqWYsVBJ6V7Mym0E",
+      authDomain: "junkidrop.firebaseapp.com",
+      projectId: "junkidrop",
+      storageBucket: "junkidrop.appspot.com",
+      messagingSenderId: "1093337835515",
+      appId: "1:1093337835515:web:99f507ebaef6ef70080d5e"
+    };
+
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+    let currentUser;
+
+    auth.onAuthStateChanged(user => {
+      if (!user) {
+        document.getElementById('ordersContainer').textContent = "Please login first.";
+        return;
+      }
+      currentUser = user;
+      loadOrders();
+    });
+
+    async function loadOrders() {
+      const container = document.getElementById('ordersContainer');
+      container.innerHTML = "Loading orders...";
+
+      try {
+        const querySnap = await db.collection('Buyorder')
+          .where('quantityRemaining', '>', 0)
+          .get();
+
+        if (querySnap.empty) {
+          container.textContent = "No available buy orders to claim.";
+          return;
+        }
+
+        container.innerHTML = '';
+        querySnap.forEach(doc => {
+          const data = doc.data();
+          const orderId = doc.id;
+
+          const orderType = data.orderType || 'N/A';
+          const link = data.link || '';
+          const pricePerunit = typeof data.pricePerunit === 'number' ? data.pricePerunit : 0;
+          const quantityRemaining = typeof data.quantityRemaining === 'number' ? data.quantityRemaining : 0;
+
+          const div = document.createElement('div');
+          div.className = 'order';
+          div.innerHTML = `
+            <p><strong>Order Type:</strong> ${orderType}</p>
+            <p><strong>Link:</strong> <a href="${link}" target="_blank">${link || 'N/A'}</a></p>
+            <p><strong>Price/Unit:</strong> $${pricePerunit.toFixed(2)}</p>
+            <p><strong>Available Quantity:</strong> ${quantityRemaining}</p>
+            <input type="number" min="1" max="${quantityRemaining}" id="qty-${orderId}" placeholder="Quantity to claim" />
+            <button onclick="claimOrder('${orderId}', ${pricePerunit}, ${quantityRemaining}, '${link.replace(/'/g, "\\'")}')">Claim Order</button>
+          `;
+          container.appendChild(div);
+        });
+
+      } catch (err) {
+        console.error("Error loading orders:", err);
+        container.textContent = "Error loading orders.";
+      }
+    }
+
+    async function claimOrder(orderId, pricePerunit, maxQty, link) {
+      const input = document.getElementById(`qty-${orderId}`);
+      const qty = parseInt(input.value);
+
+      if (!qty || qty <= 0 || qty > maxQty) {
+        alert(`Enter a valid quantity between 1 and ${maxQty}`);
+        return;
+      }
+
+      const orderRef = db.collection('Buyorder').doc(orderId);
+      const claimRef = db.collection('BuyorderClaims').doc();
+
+      try {
+        await db.runTransaction(async (transaction) => {
+          const snap = await transaction.get(orderRef);
+          if (!snap.exists) throw "Order not found";
+
+          const order = snap.data();
+          const remaining = order.quantityRemaining || 0;
+
+          if (qty > remaining) throw "Not enough quantity left";
+
+          transaction.update(orderRef, {
+            quantityRemaining: remaining - qty
+          });
+
+          transaction.set(claimRef, {
+            orderId,
+            sellerId: currentUser.uid,
+            quantityClaimed: qty,
+            status: "in-progress",
+            proof: [],
+            pricePerunit,
+            totalClaimValue: qty * pricePerunit,
+            link: link || '',
+            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+          });
+        });
+
+        alert("Order claimed successfully!");
+        input.value = "";
+        loadOrders();
+
+      } catch (error) {
+        console.error("Transaction failed:", error);
+        alert("Error claiming order: " + error);
+      }
+    }
+
+    // Mobile Menu Toggle
+    function toggleMenu() {
+      const nav = document.getElementById('mobileNav');
+      nav.classList.toggle('open');
+      document.body.style.overflow = nav.classList.contains('open') ? 'hidden' : '';
+    }
+  </script>
+</body>
+</html>

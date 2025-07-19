@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Payout Request - JunkDrop</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;900&display=swap" rel="stylesheet">
+  <style>
+    /* Your existing styles remain unchanged */
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      background: linear-gradient(135deg, #0a0f1c, #1b2232);
+      font-family: 'Poppins', sans-serif;
+      color: #fff;
+      padding: 80px 20px 40px;
+    }
+    header {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      background: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(10px);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 20px;
+      z-index: 1000;
+    }
+    header .logo { font-size: 22px; font-weight: 900; color: #00ffc3; }
+    .menu { font-size: 26px; cursor: pointer; color: #00ffc3; }
+    #mobileNav {
+      position: fixed; top: 4.5%; right: -60%; width: 60%; height: 100%;
+      background: rgba(255, 255, 255, 0.1);
+      backdrop-filter: blur(10px);
+      box-shadow: -2px 0 12px rgba(0, 0, 0, 0.3);
+      display: flex; flex-direction: column; padding: 25px;
+      transition: right 0.3s ease; z-index: 999;
+    }
+    #mobileNav.open { right: 0; }
+    #mobileNav a {
+      display: block;
+      text-decoration: none;
+      color: #00ffc3;
+      font-weight: 600;
+      margin: 20px 0;
+      font-size: 18px;
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    }
+    #balanceDisplay, .asset-view {
+      font-size: 16px;
+      font-weight: bold;
+      color: #00ffc3;
+      text-align: center;
+      margin-top: 10px;
+    }
+    h1 {
+      text-align: center;
+      color: #00ffc3;
+      margin-bottom: 30px;
+      font-size: 26px;
+    }
+    .section {
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 20px;
+      padding: 30px;
+      max-width: 500px;
+      margin: 0 auto;
+      box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    }
+    label {
+      display: block;
+      margin-top: 15px;
+      margin-bottom: 5px;
+      font-weight: 600;
+    }
+    input {
+      width: 100%;
+      padding: 12px;
+      border-radius: 12px;
+      border: none;
+      font-size: 16px;
+      background: rgba(255, 255, 255, 0.1);
+      color: #fff;
+      margin-bottom: 10px;
+    }
+    button {
+      margin-top: 20px;
+      width: 100%;
+      padding: 14px;
+      font-size: 16px;
+      background: #00ffc3;
+      color: #000;
+      border: none;
+      border-radius: 12px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+    button:hover { background: #00e6b0; }
+    .error {
+      color: #ff5f5f;
+      font-size: 14px;
+      margin-top: 10px;
+      text-align: center;
+    }
+  </style>
+
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+</head>
+<body>
+  <header>
+    <div class="logo">JunkDrop</div>
+    <div class="menu" onclick="toggleMenu()">☰</div>
+  </header>
+
+  <div id="mobileNav">
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+      <div id="balanceDisplay">Your Asset: Loading...</div>
+      <div onclick="toggleMenu()" style="font-size: 26px; font-weight: bold; cursor: pointer; color: #00ffc3;">✕</div>
+    </div>
+    <a href="seller.html">Dashboard</a>
+    <a href="my-orders.html">My Orders</a>
+ <a href="claim-orders.html">Claim Orders</a>
+ <a href="seller-guide.html">Seller's Guide</a>
+  </div>
+
+  <div class="asset-view" id="mainBalanceDisplay">Your Asset: Loading...</div>
+  <h1>Are you ready to withdraw your incentives?</h1>
+
+  <div class="section">
+    <label for="wallet">Wallet Address</label>
+    <input type="text" id="wallet" placeholder="Enter wallet address" required />
+
+    <label for="amount">Withdrawal Amount ($)</label>
+    <input type="number" id="amount" min="1" placeholder="Enter amount" required />
+
+    <button onclick="requestPayout()">Request Withdrawal</button>
+    <div id="errorMsg" class="error"></div>
+  </div>
+
+  <script>
+    const firebaseConfig = {
+      apiKey: "AIzaSyCbqW6QePM7rw4qprDnqWYsVBJ6V7Mym0E",
+      authDomain: "junkidrop.firebaseapp.com",
+      projectId: "junkidrop",
+      storageBucket: "junkidrop.appspot.com",
+      messagingSenderId: "1093337835515",
+      appId: "1:1093337835515:web:99f507ebaef6ef70080d5e"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+
+    let userId = null;
+    let currentBalance = 0;
+
+    function toggleMenu() {
+      document.getElementById("mobileNav").classList.toggle("open");
+    }
+
+    auth.onAuthStateChanged(user => {
+      if (!user) {
+        window.location.href = "index.html";
+      } else {
+        userId = user.uid;
+        const sellerDocRef = db.collection("Sellers").doc(userId);
+        sellerDocRef.onSnapshot(doc => {
+          if (doc.exists) {
+            const data = doc.data();
+            currentBalance = data.balance || 0;
+            const balanceText = `Your Asset: $${currentBalance.toFixed(2)}`;
+            document.getElementById("balanceDisplay").textContent = balanceText;
+            document.getElementById("mainBalanceDisplay").textContent = balanceText;
+          } else {
+            console.warn("No seller document found.");
+            document.getElementById("balanceDisplay").textContent = "Your Asset: $0.00";
+            document.getElementById("mainBalanceDisplay").textContent = "Your Asset: $0.00";
+          }
+        }, error => {
+          console.error("Error fetching seller balance:", error);
+        });
+      }
+    });
+
+    function requestPayout() {
+      const wallet = document.getElementById("wallet").value.trim();
+      const amount = parseFloat(document.getElementById("amount").value);
+      const errorEl = document.getElementById("errorMsg");
+      errorEl.textContent = "";
+
+      if (!wallet) {
+        errorEl.textContent = "Please enter your wallet address.";
+        return;
+      }
+
+      if (!amount || amount <= 0) {
+        errorEl.textContent = "Please enter a valid amount.";
+        return;
+      }
+
+      if (amount > currentBalance) {
+        errorEl.textContent = "Insufficient balance.";
+        return;
+      }
+
+      const sellerRef = db.collection("Sellers").doc(userId);
+      const payoutRef = db.collection("payoutRequest").doc();
+
+      db.runTransaction(async (transaction) => {
+        const sellerDoc = await transaction.get(sellerRef);
+        const balance = sellerDoc.data()?.balance || 0;
+
+        if (balance < amount) throw new Error("Insufficient balance.");
+
+        
+        transaction.set(payoutRef, {
+          sellerId: userId,
+          wallet,
+          amount,
+          status: "pending",
+          timestamp: firebase.firestore.FieldValue.serverTimestamp()
+        });
+      })
+      .then(() => {
+        alert(`Withdrawal request for $${amount.toFixed(2)} submitted.`);
+        document.getElementById("wallet").value = "";
+        document.getElementById("amount").value = "";
+      })
+      .catch(err => {
+        console.error("Transaction failed:", err);
+        errorEl.textContent = err.message || "Error submitting request.";
+      });
+    }
+  </script>
+</body>
+</html>

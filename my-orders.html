@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Proof Submission</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <style>
+    body {
+      background-color: #121212;
+      color: #00ffc3;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      margin: 0;
+      padding: 20px;
+    }
+
+    h1 {
+      text-align: center;
+      margin-bottom: 30px;
+      color: #00ffc3;
+    }
+
+    .claim-box {
+      background-color: rgba(0, 255, 195, 0.06);
+      border: 1px solid #00ffc3;
+      border-radius: 10px;
+      padding: 15px;
+      margin-bottom: 20px;
+    }
+
+    .claim-box p {
+      margin: 6px 0;
+    }
+
+    input[type="url"] {
+      width: 100%;
+      padding: 8px;
+      margin-top: 8px;
+      margin-bottom: 10px;
+      border-radius: 5px;
+      border: 1px solid #00ffc3;
+      background-color: #1e1e1e;
+      color: #00ffc3;
+    }
+
+    button {
+      background-color: #00ffc3;
+      color: #121212;
+      padding: 10px 16px;
+      font-weight: bold;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background-color 0.2s ease;
+    }
+
+    button:hover {
+      background-color: #00bfa5;
+    }
+
+    hr {
+      border: none;
+      border-top: 1px solid #333;
+      margin: 20px 0;
+    }
+
+    /* Mobile Nav */
+    .menu {
+      font-size: 28px;
+      cursor: pointer;
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 1001;
+      color: #00ffc3;
+    }
+
+    #mobileNav {
+      display: none;
+      position: fixed;
+      top: 0;
+      right: 0;
+      width: 65%;
+      height: 100%;
+      background: rgba(255, 255, 255, 0.06);
+      backdrop-filter: blur(10px);
+      box-shadow: -2px 0 12px rgba(0, 0, 0, 0.4);
+      flex-direction: column;
+      padding: 25px;
+      z-index: 1000;
+      opacity: 0;
+      transition: opacity 0.3s ease, right 0.3s ease;
+    }
+
+    #mobileNav.open {
+      display: flex;
+      opacity: 1;
+    }
+
+    #mobileNav div {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 30px;
+    }
+
+    #mobileNav a {
+      text-decoration: none;
+      color: #00ffc3;
+      font-weight: 600;
+      margin: 18px 0;
+      font-size: 18px;
+    }
+
+    @media (min-width: 768px) {
+      .menu {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Mobile Nav Button -->
+  <div class="menu" onclick="toggleMenu()">☰</div>
+
+  <!-- Mobile Navigation -->
+  <div id="mobileNav">
+    <div>
+      <strong>Navigation</strong>
+      <span style="cursor: pointer;" onclick="toggleMenu()">❌</span>
+    </div>
+    <a href="seller.html">Dashboard</a>
+    <a href="claim-orders.html">Claim Orders</a>
+    <a href="payout.html">Withdraw</a>
+     <a href="seller-guide.html">Seller's Guide</a>
+  </div>
+
+  <h1>Submit Proof for Your Claimed Orders</h1>
+  <div id="claimsContainer">Loading...</div>
+
+  <!-- Firebase SDKs -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+
+  <script>
+    function toggleMenu() {
+      const nav = document.getElementById('mobileNav');
+      const isOpen = nav.classList.contains('open');
+      if (isOpen) {
+        nav.classList.remove('open');
+        setTimeout(() => {
+          nav.style.display = 'none';
+          document.body.style.overflow = '';
+        }, 300);
+      } else {
+        nav.style.display = 'flex';
+        requestAnimationFrame(() => {
+          nav.classList.add('open');
+          document.body.style.overflow = 'hidden';
+        });
+      }
+    }
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyCbqW6QePM7rw4qprDnqWYsVBJ6V7Mym0E",
+      authDomain: "junkidrop.firebaseapp.com",
+      projectId: "junkidrop"
+    };
+    firebase.initializeApp(firebaseConfig);
+    const auth = firebase.auth();
+    const db = firebase.firestore();
+
+    let currentUser;
+
+    auth.onAuthStateChanged(user => {
+      if (!user) return alert("Login first.");
+      currentUser = user;
+      loadClaims();
+    });
+
+    async function loadClaims() {
+      const container = document.getElementById("claimsContainer");
+      container.innerHTML = "Loading...";
+
+      try {
+        const submittedSnap = await db.collection("myorderClaims")
+          .where("sellerId", "==", currentUser.uid)
+          .get();
+
+        const submittedClaimIds = new Set();
+        submittedSnap.forEach(doc => {
+          const submittedId = doc.data().claimId || doc.id;
+          submittedClaimIds.add(submittedId);
+        });
+
+        const claimsSnap = await db.collection("BuyorderClaims")
+          .where("sellerId", "==", currentUser.uid)
+          .get();
+
+        if (claimsSnap.empty) {
+          container.innerHTML = "You have no claims.";
+          return;
+        }
+
+        container.innerHTML = "";
+        let count = 0;
+
+        claimsSnap.forEach(doc => {
+          const claimId = doc.id;
+          if (submittedClaimIds.has(claimId)) return;
+
+          const data = doc.data();
+          const orderId = data.orderId || "";
+
+          const div = document.createElement("div");
+          div.className = "claim-box";
+          div.id = "claim-" + claimId;
+
+          div.innerHTML = `
+            <p><b>Claim ID:</b> ${claimId}</p>
+            <p><b>Order ID:</b> ${orderId}</p>
+            <p><b>Order Type:</b> ${data.orderType}</p>
+            <p><b>Link:</b> ${data.link}</p>
+            <p><b>Quantity:</b> ${data.quantityClaimed}</p>
+            <p><b>Price/unit:</b> ${data.pricePerunit}</p>
+            <input type="url" id="proof-${claimId}" placeholder="Google Drive proof link" />
+            <button onclick="submitProof('${claimId}', '${orderId}', ${data.pricePerunit}, ${data.quantityClaimed}, '${data.orderType}', '${data.link}')">
+              Submit Proof
+            </button>
+          `;
+          container.appendChild(div);
+          count++;
+        });
+
+        if (count === 0) {
+          container.innerHTML = "✅ All your claims have already been submitted.";
+        }
+
+      } catch (error) {
+        console.error("Error loading claims:", error);
+        container.innerHTML = "❌ Error loading claims.";
+      }
+    }
+
+    async function submitProof(claimId, orderId, pricePerunit, quantityClaimed, orderType, link) {
+      const proof = document.getElementById(`proof-${claimId}`).value.trim();
+      if (!proof.startsWith("http")) return alert("Invalid link.");
+
+      const total = pricePerunit * quantityClaimed;
+      const net = total * 0.8;
+
+      try {
+        await db.collection("myorderClaims").doc(claimId).set({
+          claimId,
+          orderId,
+          sellerId: currentUser.uid,
+          link,
+          orderType,
+          quantityClaimed,
+          pricePerunit,
+          totalClaimValue: total,
+          netPayout: net,
+          proof,
+          status: "pending",
+          timestamp: firebase.firestore.FieldValue.serverTimestamp()
+        });
+
+        alert("✅ Proof submitted.");
+        document.getElementById(`claim-${claimId}`)?.remove();
+
+      } catch (e) {
+        console.error(e);
+        alert("❌ Failed: " + e.message);
+      }
+    }
+  </script>
+</body>
+</html>
