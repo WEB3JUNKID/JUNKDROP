@@ -2,7 +2,6 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  
   <title>Seller Signup - JunkDrop</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;700&display=swap" rel="stylesheet" />
@@ -18,6 +17,7 @@
       align-items: center;
       padding: 15px;
     }
+
     .auth-box {
       background: rgba(255, 255, 255, 0.05);
       border-radius: 20px;
@@ -27,12 +27,20 @@
       text-align: center;
       backdrop-filter: blur(12px);
     }
+
+    .button-group {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
     h2 {
       margin-bottom: 25px;
       font-weight: 700;
       font-size: 1.8rem;
       color: #00ffc3;
     }
+
     label {
       display: block;
       text-align: left;
@@ -42,6 +50,7 @@
       font-size: 14px;
       color: #e0e0e0;
     }
+
     input, select, textarea {
       width: 100%;
       padding: 12px;
@@ -54,9 +63,11 @@
       box-sizing: border-box;
       margin-bottom: 10px;
     }
+
     input::placeholder, textarea::placeholder {
       color: #bbb;
     }
+
     select {
       appearance: none;
       background-image: url('data:image/svg+xml;utf8,<svg fill="white" height="18" viewBox="0 0 24 24" width="18" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/></svg>');
@@ -64,7 +75,8 @@
       background-position-x: 100%;
       background-position-y: center;
     }
-    button {
+
+    button, .nav-btn {
       background: #00ffc3;
       color: #000000;
       padding: 14px 0;
@@ -74,18 +86,25 @@
       font-weight: 600;
       font-size: 16px;
       cursor: pointer;
-      margin-top: 15px;
       transition: background 0.3s ease;
+      text-decoration: none;
     }
-    button:hover {
+
+    button:hover, .nav-btn:hover {
       background: #00bfa5;
     }
+
     .error {
       margin-top: 15px;
       font-weight: 600;
       font-size: 14px;
       color: #ff5252;
       min-height: 20px;
+    }
+
+    #applicationForm {
+      display: none;
+      margin-top: 20px;
     }
   </style>
 
@@ -96,40 +115,56 @@
 </head>
 <body>
 
-  <form class="auth-box" onsubmit="event.preventDefault(); signupSeller();">
-    <h2>Seller Application</h2>
+  <div class="auth-box">
 
-    <label for="email">Email</label>
-    <input type="email" id="email" placeholder="Enter your email" required />
+    <h2>Seller Onboarding</h2>
 
-    <label for="password">Password</label>
-    <input type="password" id="password" placeholder="Enter a password" required />
+    <div class="button-group">
+  <button onclick="document.getElementById('applicationForm').style.display='block'">
+    ✍️ Fill Your Application
+  </button>
 
-    <label for="name">Full Name / Nickname</label>
-    <input type="text" id="name" placeholder="Your display name" required />
+  <p style="margin-top: 10px; color: #cfd8dc; font-size: 14px;">
+    Already approved? <a href="seller-login.html" style="color: #00ffc3; text-decoration: underline;">Log in here</a>.
+  </p>
+</div>
 
-    <label for="telegram">Telegram Link</label>
-    <input type="url" id="telegram" placeholder="https://t.me/yourusername" required />
+    <form id="applicationForm" onsubmit="event.preventDefault(); signupSeller();">
+      <label for="email">Email</label>
+      <input type="email" id="email" placeholder="Enter your email" required />
 
-    <label for="hours">Available Hours per Day</label>
-    <input type="number" id="hours" min="1" max="24" placeholder="e.g., 4" required />
+      <label for="password">Password</label>
+      <input type="password" id="password" placeholder="Enter a password" required />
 
-    <label for="experience">Testnet Experience (Years)</label>
-    <select id="experience" required>
-      <option value="" disabled selected>Select years of experience</option>
-      <option value="0">0</option>
-      <option value="1">1 year</option>
-      <option value="2">2 years</option>
-      <option value="3">3 years</option>
-      <option value="4">4+ years</option>
-    </select>
+      <label for="name">Full Name / Nickname</label>
+      <input type="text" id="name" placeholder="Your display name" required />
 
-    <label for="whyJoin">Why Should We Bring You Onboard? <p>Please include your email that you wish to receive alerts as a seller </p></label>
-    <textarea id="whyJoin" rows="4" placeholder="Tell us why..." required></textarea>
+      <label for="telegram">Telegram Link</label>
+      <input type="url" id="telegram" placeholder="https://t.me/yourusername" required />
 
-    <button type="submit">Submit Application</button>
-    <div id="errorMsg" class="error"></div>
-  </form>
+      <label for="hours">Available Hours per Day</label>
+      <input type="number" id="hours" min="1" max="24" placeholder="e.g., 4" required />
+
+      <label for="experience">Testnet Experience (Years)</label>
+      <select id="experience" required>
+        <option value="" disabled selected>Select years of experience</option>
+        <option value="0">0</option>
+        <option value="1">1 year</option>
+        <option value="2">2 years</option>
+        <option value="3">3 years</option>
+        <option value="4">4+ years</option>
+      </select>
+
+      <label for="whyJoin">
+        Why Should We Bring You Onboard?
+        <p>Please include your email that you wish to receive alerts as a seller</p>
+      </label>
+      <textarea id="whyJoin" rows="4" placeholder="Tell us why..." required></textarea>
+
+      <button type="submit">Submit Application</button>
+      <div id="errorMsg" class="error"></div>
+    </form>
+  </div>
 
   <script>
     const firebaseConfig = {
