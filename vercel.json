@@ -1,0 +1,20 @@
+{
+  "cleanUrls": true,
+  "rewrites": [
+    { "source": "/", "destination": "/index.html" },
+    { "source": "/buyer", "destination": "/buyer.html" },
+    { "source": "/seller", "destination": "/seller.html" },
+    { "source": "/signup-buyer", "destination": "/buyer-signup.html" },
+    { "source": "/signup-seller", "destination": "/seller-signup.html" },
+    { "source": "/login-buyer", "destination": "/buyer-login.html" },
+    { "source": "/login-seller", "destination": "/seller-login.html" },
+    { "source": "/deposit", "destination": "/deposit.html" },
+    { "source": "/services", "destination": "/services.html" },
+    { "source": "/order-received", "destination": "/order-received.html" },
+    { "source": "/claim-orders", "destination": "/claim-orders.html" },
+    { "source": "/payout", "destination": "/payout.html" },
+    { "source": "/my-orders", "destination": "/my-orders.html" },
+    { "source": "/profile", "destination": "/profile.html" },
+    { "source": "/seller-guide", "destination": "/seller-guide.html" }
+  ]
+}
